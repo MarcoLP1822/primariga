@@ -11,7 +11,7 @@ export const typography = {
     bold: 'System',
     // Per iOS/Android usare font di sistema ottimizzati
   },
-  
+
   // Font sizes
   fontSize: {
     xs: 12,
@@ -24,7 +24,7 @@ export const typography = {
     '4xl': 36,
     '5xl': 48,
   },
-  
+
   // Line heights
   lineHeight: {
     tight: 1.2,
@@ -32,7 +32,7 @@ export const typography = {
     relaxed: 1.75,
     loose: 2,
   },
-  
+
   // Font weights
   fontWeight: {
     light: '300' as const,
@@ -41,7 +41,7 @@ export const typography = {
     semibold: '600' as const,
     bold: '700' as const,
   },
-  
+
   // Letter spacing
   letterSpacing: {
     tighter: -0.5,
@@ -87,7 +87,7 @@ export const textStyles = {
     fontWeight: typography.fontWeight.medium,
     lineHeight: typography.lineHeight.normal,
   },
-  
+
   // Body text
   body1: {
     fontSize: typography.fontSize.base,
@@ -99,7 +99,7 @@ export const textStyles = {
     fontWeight: typography.fontWeight.regular,
     lineHeight: typography.lineHeight.normal,
   },
-  
+
   // Special text
   bookLine: {
     fontSize: typography.fontSize.xl,
@@ -108,7 +108,7 @@ export const textStyles = {
     fontStyle: 'italic' as const,
     letterSpacing: typography.letterSpacing.wide,
   },
-  
+
   // UI text
   button: {
     fontSize: typography.fontSize.base,

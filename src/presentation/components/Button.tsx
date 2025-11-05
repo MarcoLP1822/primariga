@@ -29,7 +29,7 @@ export const Button: React.FC<ButtonProps> = ({
   style,
 }) => {
   const theme = useTheme();
-  
+
   return (
     <PaperButton
       mode={mode}
@@ -37,11 +37,7 @@ export const Button: React.FC<ButtonProps> = ({
       icon={icon}
       loading={loading}
       disabled={disabled}
-      style={[
-        styles.button,
-        fullWidth && styles.fullWidth,
-        style,
-      ]}
+      style={[styles.button, fullWidth && styles.fullWidth, style]}
       contentStyle={styles.content}
       labelStyle={styles.label}
     >

@@ -18,11 +18,11 @@ export class SupabaseReadingHistoryRepository implements IReadingHistoryReposito
       })
       .select()
       .single();
-    
+
     if (error || !data) {
       throw new Error(`Failed to save reading history: ${error?.message}`);
     }
-    
+
     return {
       id: data.id,
       userId: data.user_id,
@@ -31,7 +31,7 @@ export class SupabaseReadingHistoryRepository implements IReadingHistoryReposito
       readingDurationSeconds: data.duration_seconds || undefined,
     };
   }
-  
+
   async trackReading(userId: string, bookLineId: string): Promise<ReadingHistory> {
     // Per book_line_id, dobbiamo prima ottenere il book_id
     // Nota: Questa è una semplificazione. Dovremmo avere una tabella separata
@@ -45,11 +45,11 @@ export class SupabaseReadingHistoryRepository implements IReadingHistoryReposito
       })
       .select()
       .single();
-    
+
     if (error || !data) {
       throw new Error(`Failed to track reading: ${error?.message}`);
     }
-    
+
     return {
       id: data.id,
       userId: data.user_id,
@@ -58,25 +58,25 @@ export class SupabaseReadingHistoryRepository implements IReadingHistoryReposito
       readingDurationSeconds: data.duration_seconds || undefined,
     };
   }
-  
+
   async getByUserId(userId: string, limit?: number): Promise<ReadingHistory[]> {
     let query = supabase
       .from('user_reading_history')
       .select('*')
       .eq('user_id', userId)
       .order('read_at', { ascending: false });
-    
+
     if (limit) {
       query = query.limit(limit);
     }
-    
+
     const { data, error } = await query;
-    
+
     if (error || !data) {
       return [];
     }
-    
-    return data.map(item => ({
+
+    return data.map((item) => ({
       id: item.id,
       userId: item.user_id,
       bookId: item.book_id,
@@ -94,8 +94,8 @@ export class SupabaseReadingHistoryRepository implements IReadingHistoryReposito
       .from('user_reading_history')
       .select('*', { count: 'exact', head: true })
       .eq('book_id', bookId);
-    
-    return error ? 0 : (count || 0);
+
+    return error ? 0 : count || 0;
   }
 
   async getUserReadingStreak(userId: string): Promise<number> {
@@ -112,14 +112,14 @@ export class SupabaseReadingHistoryRepository implements IReadingHistoryReposito
       .order('read_at', { ascending: false })
       .limit(1)
       .single();
-    
+
     if (error || !data) {
       return null;
     }
-    
+
     return new Date(data.read_at);
   }
-  
+
   async getReadingStats(userId: string): Promise<{
     totalBooksRead: number;
     totalReadingTimeSeconds: number;
@@ -131,7 +131,7 @@ export class SupabaseReadingHistoryRepository implements IReadingHistoryReposito
       .select('*')
       .eq('user_id', userId)
       .order('read_at', { ascending: false });
-    
+
     if (error || !data) {
       return {
         totalBooksRead: 0,
@@ -140,16 +140,16 @@ export class SupabaseReadingHistoryRepository implements IReadingHistoryReposito
         recentlyRead: [],
       };
     }
-    
+
     const totalTime = data.reduce((sum, item) => sum + (item.duration_seconds || 0), 0);
-    const recentlyRead = data.slice(0, 10).map(item => ({
+    const recentlyRead = data.slice(0, 10).map((item) => ({
       id: item.id,
       userId: item.user_id,
       bookId: item.book_id,
       readAt: new Date(item.read_at),
       readingDurationSeconds: item.duration_seconds || undefined,
     }));
-    
+
     return {
       totalBooksRead: data.length,
       totalReadingTimeSeconds: totalTime,
@@ -157,7 +157,7 @@ export class SupabaseReadingHistoryRepository implements IReadingHistoryReposito
       recentlyRead,
     };
   }
-  
+
   async hasReadBook(userId: string, bookId: string): Promise<boolean> {
     const { data, error } = await supabase
       .from('user_reading_history')
@@ -166,7 +166,7 @@ export class SupabaseReadingHistoryRepository implements IReadingHistoryReposito
       .eq('book_id', bookId)
       .limit(1)
       .single();
-    
+
     return !error && !!data;
   }
 }

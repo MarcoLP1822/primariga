@@ -7,7 +7,7 @@ export class GetOrCreateUserProfile {
   async execute(userId: string): Promise<UserProfile> {
     // Ottiene il profilo utente, o lo crea se non esiste
     let profile = await this.userProfileRepository.getById(userId);
-    
+
     if (!profile) {
       profile = await this.userProfileRepository.create({
         id: userId,
@@ -15,7 +15,7 @@ export class GetOrCreateUserProfile {
         updatedAt: new Date(),
       });
     }
-    
+
     return profile;
   }
 }

@@ -12,19 +12,12 @@ export interface LoadingSpinnerProps {
  * LoadingSpinner Component
  * Spinner di caricamento centralizzato
  */
-export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
-  size = 'large',
-  color,
-  style,
-}) => {
+export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({ size = 'large', color, style }) => {
   const theme = useTheme();
-  
+
   return (
     <View style={[styles.container, style]}>
-      <ActivityIndicator
-        size={size}
-        color={color || theme.colors.primary}
-      />
+      <ActivityIndicator size={size} color={color || theme.colors.primary} />
     </View>
   );
 };

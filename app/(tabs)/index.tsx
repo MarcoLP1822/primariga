@@ -1,6 +1,10 @@
 import { View, StyleSheet, ScrollView, RefreshControl } from 'react-native';
 import { Text, Button as PaperButton, IconButton } from 'react-native-paper';
-import { useRandomBook, useIncrementBookView, useIncrementBookClick } from '../../src/presentation/hooks/useBooks';
+import {
+  useRandomBook,
+  useIncrementBookView,
+  useIncrementBookClick,
+} from '../../src/presentation/hooks/useBooks';
 import { useToggleLike, useIsBookLiked } from '../../src/presentation/hooks/useLikes';
 import { BookLineCard, LoadingSpinner, ErrorMessage } from '../../src/presentation/components';
 import { spacing } from '../../src/presentation/theme/spacing';
@@ -24,6 +28,7 @@ export default function HomeScreen() {
     if (book?.id) {
       incrementView.mutate(book.id);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [book?.id]);
 
   const handleNext = () => {
@@ -37,7 +42,7 @@ export default function HomeScreen() {
 
   const handleBuyClick = async () => {
     if (!book) return;
-    
+
     // Incrementa click count
     incrementClick.mutate(book.id);
 
@@ -68,8 +73,8 @@ export default function HomeScreen() {
     return (
       <View style={styles.centerContainer}>
         <ErrorMessage 
-          message="Errore nel caricamento del libro" 
-          onRetry={refetch}
+          message={`Errore nel caricamento del libro: ${error.message}`} 
+          onRetry={refetch} 
         />
       </View>
     );
@@ -81,11 +86,7 @@ export default function HomeScreen() {
         <Text variant="titleLarge" style={styles.emptyText}>
           😔 Nessun libro disponibile
         </Text>
-        <PaperButton 
-          mode="contained" 
-          onPress={handleNext}
-          style={styles.retryButton}
-        >
+        <PaperButton mode="contained" onPress={handleNext} style={styles.retryButton}>
           Riprova
         </PaperButton>
       </View>
@@ -96,9 +97,7 @@ export default function HomeScreen() {
     <ScrollView
       style={styles.container}
       contentContainerStyle={styles.contentContainer}
-      refreshControl={
-        <RefreshControl refreshing={isLoading} onRefresh={handleNext} />
-      }
+      refreshControl={<RefreshControl refreshing={isLoading} onRefresh={handleNext} />}
     >
       <View style={styles.header}>
         <Text variant="headlineMedium" style={styles.title}>
@@ -137,12 +136,7 @@ export default function HomeScreen() {
       </View>
 
       <View style={styles.nextContainer}>
-        <IconButton
-          icon="refresh"
-          size={32}
-          mode="contained"
-          onPress={handleNext}
-        />
+        <IconButton icon="refresh" size={32} mode="contained" onPress={handleNext} />
         <Text variant="bodySmall" style={styles.nextText}>
           Prossimo libro
         </Text>

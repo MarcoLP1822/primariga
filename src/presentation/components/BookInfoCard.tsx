@@ -15,19 +15,15 @@ export interface BookInfoCardProps {
  * BookInfoCard Component
  * Card per mostrare informazioni sul libro
  */
-export const BookInfoCard: React.FC<BookInfoCardProps> = ({
-  book,
-  onPress,
-  style,
-}) => {
+export const BookInfoCard: React.FC<BookInfoCardProps> = ({ book, onPress, style }) => {
   const theme = useTheme();
-  
+
   return (
     <Card onPress={onPress} elevation="sm" style={style}>
       <View style={styles.container}>
         {book.coverImageUrl && (
-          <Image 
-            source={{ uri: book.coverImageUrl }} 
+          <Image
+            source={{ uri: book.coverImageUrl }}
             style={styles.coverImage}
             resizeMode="cover"
           />

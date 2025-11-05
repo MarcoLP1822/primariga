@@ -1,0 +1,21 @@
+# Ignore artifacts:
+node_modules
+dist
+build
+coverage
+.expo
+.expo-shared
+
+# Ignore all config files
+*.config.js
+*.config.ts
+
+# Ignore generated files
+src/data/supabase/types.generated.ts
+
+# Ignore test snapshots
+**/__snapshots__
+
+# Ignore package-lock and yarn.lock
+package-lock.json
+yarn.lock

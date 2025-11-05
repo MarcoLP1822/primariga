@@ -33,21 +33,25 @@ EXPO_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
 ### 3. Avvia l'app
 
 **Per iOS Simulator:**
+
 ```bash
 npm run ios
 ```
 
 **Per Android Emulator:**
+
 ```bash
 npm run android
 ```
 
 **Per Web Browser:**
+
 ```bash
 npm run web
 ```
 
 **Per vedere tutte le opzioni:**
+
 ```bash
 npm start
 ```
@@ -82,7 +86,7 @@ Prima di testare l'app, assicurati che il database Supabase contenga dati:
 
 ```sql
 INSERT INTO books (title, author, genres, language, amazon_link)
-VALUES 
+VALUES
   ('Il nome della rosa', 'Umberto Eco', ARRAY['Giallo', 'Storico'], 'it', 'https://amazon.it/...'),
   ('1984', 'George Orwell', ARRAY['Distopico', 'Fantascienza'], 'it', 'https://amazon.it/...');
 
@@ -96,6 +100,7 @@ SELECT id, 'Naturalmente un manoscritto.', 1 FROM books WHERE title = 'Il nome d
 Attualmente l'app usa un sistema di autenticazione temporaneo (ID generato client-side).
 
 Per produzione, implementare:
+
 - Supabase Auth con OAuth providers
 - Email/Password authentication
 - User profiles persistenti
@@ -113,6 +118,7 @@ Il database Supabase è vuoto. Popola la tabella `books` con dati di esempio.
 ### Expo Router non funziona
 
 Cancella cache e riavvia:
+
 ```bash
 npx expo start -c
 ```
@@ -120,6 +126,7 @@ npx expo start -c
 ### TypeScript errors
 
 Rigenera i tipi:
+
 ```bash
 npm run type-check
 ```
@@ -142,21 +149,25 @@ Modifica `app/(tabs)/_layout.tsx`
 ## 📦 Prossimi Step Consigliati
 
 ### Priority 1 - Dati Reali
+
 - [ ] Popolare database con catalogo libri reali
 - [ ] Implementare scraping/API per ottenere prime righe
 
 ### Priority 2 - Autenticazione
+
 - [ ] Implementare Supabase Auth
 - [ ] User profiles persistenti
 - [ ] Social login (Google, Apple)
 
 ### Priority 3 - Features
+
 - [ ] Filtri per genere/lingua
 - [ ] Ricerca libri
 - [ ] Condivisione social
 - [ ] Notifiche push
 
 ### Priority 4 - Production Ready
+
 - [ ] Error tracking (Sentry)
 - [ ] Analytics (PostHog/Mixpanel)
 - [ ] Testing (Jest + Detox)

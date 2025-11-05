@@ -22,8 +22,8 @@ interface UIState {
   setGenres: (genres: string[]) => void;
   setLanguage: (language: string) => void;
   resetFilters: () => void;
-  
-  // Libri visti (per evitare duplicati nel feed)
+
+  // Libri visti (solo per statistiche, non esclude dalla rotazione)
   seenBookIds: string[];
   addSeenBook: (bookId: string) => void;
   clearSeenBooks: () => void;
@@ -43,10 +43,8 @@ export const useAppStore = create<AppStore>()(
       // User State
       userId: null,
       isAuthenticated: false,
-      setUser: (userId) =>
-        set({ userId, isAuthenticated: userId !== null }),
-      logout: () =>
-        set({ userId: null, isAuthenticated: false }),
+      setUser: (userId) => set({ userId, isAuthenticated: userId !== null }),
+      logout: () => set({ userId: null, isAuthenticated: false }),
 
       // UI State
       selectedGenres: [],
@@ -55,12 +53,18 @@ export const useAppStore = create<AppStore>()(
       setLanguage: (language) => set({ selectedLanguage: language }),
       resetFilters: () => set({ selectedGenres: [], selectedLanguage: 'it' }),
 
-      // Seen Books (per feed infinito senza duplicati)
+      // Seen Books (tracciamento per statistiche, i libri possono essere rivisti)
       seenBookIds: [],
       addSeenBook: (bookId) =>
-        set((state) => ({
-          seenBookIds: [...state.seenBookIds, bookId],
-        })),
+        set((state) => {
+          // Aggiungi solo se non è già presente (per conteggio accurato)
+          if (state.seenBookIds.includes(bookId)) {
+            return state;
+          }
+          return {
+            seenBookIds: [...state.seenBookIds, bookId],
+          };
+        }),
       clearSeenBooks: () => set({ seenBookIds: [] }),
     }),
     {

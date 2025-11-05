@@ -14,12 +14,12 @@ export interface IUserProfileRepository {
    * Ottiene un profilo per ID
    */
   getById(userId: string): Promise<UserProfile | null>;
-  
+
   /**
    * Alias per compatibilità
    */
   getProfileById(userId: string): Promise<UserProfile | null>;
-  
+
   /**
    * Crea un nuovo profilo utente
    */
@@ -28,7 +28,9 @@ export interface IUserProfileRepository {
   /**
    * Aggiorna il profilo dell'utente corrente
    */
-  updateProfile(data: Partial<Omit<UserProfile, 'id' | 'createdAt' | 'updatedAt'>>): Promise<UserProfile>;
+  updateProfile(
+    data: Partial<Omit<UserProfile, 'id' | 'createdAt' | 'updatedAt'>>
+  ): Promise<UserProfile>;
 
   /**
    * Cerca profili per username

@@ -4,33 +4,31 @@ import { supabase } from '../supabaseClient';
 
 export class SupabaseUserProfileRepository implements IUserProfileRepository {
   async getCurrentProfile(): Promise<UserProfile | null> {
-    const { data: { user } } = await supabase.auth.getUser();
-    
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
     if (!user) {
       return null;
     }
-    
+
     return this.getById(user.id);
   }
 
   async getById(userId: string): Promise<UserProfile | null> {
-    const { data, error } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', userId)
-      .single();
-    
+    const { data, error } = await supabase.from('profiles').select('*').eq('id', userId).single();
+
     if (error || !data) {
       return null;
     }
-    
+
     return {
       id: data.id,
       createdAt: new Date(data.created_at),
       updatedAt: new Date(data.updated_at),
     };
   }
-  
+
   async getProfileById(userId: string): Promise<UserProfile | null> {
     return this.getById(userId);
   }
@@ -45,11 +43,11 @@ export class SupabaseUserProfileRepository implements IUserProfileRepository {
       })
       .select()
       .single();
-    
+
     if (error || !data) {
       throw new Error(`Failed to create profile: ${error?.message}`);
     }
-    
+
     return {
       id: data.id,
       createdAt: new Date(data.created_at),
@@ -57,13 +55,17 @@ export class SupabaseUserProfileRepository implements IUserProfileRepository {
     };
   }
 
-  async updateProfile(data: Partial<Omit<UserProfile, 'id' | 'createdAt' | 'updatedAt'>>): Promise<UserProfile> {
-    const { data: { user } } = await supabase.auth.getUser();
-    
+  async updateProfile(
+    data: Partial<Omit<UserProfile, 'id' | 'createdAt' | 'updatedAt'>>
+  ): Promise<UserProfile> {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
     if (!user) {
       throw new Error('No authenticated user');
     }
-    
+
     const { data: updatedData, error } = await supabase
       .from('profiles')
       .update({
@@ -72,18 +74,18 @@ export class SupabaseUserProfileRepository implements IUserProfileRepository {
       .eq('id', user.id)
       .select()
       .single();
-    
+
     if (error || !updatedData) {
       throw new Error(`Failed to update profile: ${error?.message}`);
     }
-    
+
     return {
       id: updatedData.id,
       createdAt: new Date(updatedData.created_at),
       updatedAt: new Date(updatedData.updated_at),
     };
   }
-  
+
   async searchByUsername(username: string): Promise<UserProfile[]> {
     // Per ora ritorna array vuoto - non abbiamo username nella tabella profiles
     return [];

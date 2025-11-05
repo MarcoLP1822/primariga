@@ -14,16 +14,11 @@ export interface CardProps {
  * Card Component
  * Card riutilizzabile con elevazione personalizzabile
  */
-export const Card: React.FC<CardProps> = ({
-  children,
-  onPress,
-  elevation = 'md',
-  style,
-}) => {
+export const Card: React.FC<CardProps> = ({ children, onPress, elevation = 'md', style }) => {
   const theme = useTheme();
-  
+
   const Component = onPress ? PaperCard : PaperCard;
-  
+
   return (
     <Component
       style={[

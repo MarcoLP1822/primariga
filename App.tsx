@@ -7,6 +7,10 @@ import { supabase } from './src/data/supabaseClient';
 import { lightTheme } from './src/presentation/theme';
 import { Card, LoadingSpinner, ErrorMessage } from './src/presentation/components';
 import { spacing } from './src/presentation/theme/spacing';
+import { initSentry } from './src/infrastructure/monitoring/sentry';
+
+// Inizializza Sentry all'avvio
+initSentry();
 
 export default function App() {
   const [connected, setConnected] = useState<boolean | null>(null);
@@ -19,7 +23,7 @@ export default function App() {
   async function testConnection() {
     try {
       // Test connessione al database
-      const { data, error, count } = await supabase
+      const { error, count } = await supabase
         .from('books')
         .select('id', { count: 'exact', head: false });
 
@@ -38,18 +42,16 @@ export default function App() {
       <PaperProvider theme={lightTheme}>
         <View style={styles.container}>
           <StatusBar style="auto" />
-          
+
           <Text variant="displaySmall" style={styles.title}>
             🎭 Primariga
           </Text>
           <Text variant="titleMedium" style={styles.subtitle}>
             Scopri nuove letture alla cieca
           </Text>
-          
+
           <Card style={styles.statusCard} elevation="md">
-            {connected === null && (
-              <LoadingSpinner size="small" />
-            )}
+            {connected === null && <LoadingSpinner size="small" />}
             {connected === true && (
               <>
                 <Text variant="titleLarge" style={styles.successText}>
@@ -61,10 +63,7 @@ export default function App() {
               </>
             )}
             {connected === false && (
-              <ErrorMessage
-                message="❌ Errore di connessione"
-                onRetry={testConnection}
-              />
+              <ErrorMessage message="❌ Errore di connessione" onRetry={testConnection} />
             )}
           </Card>
         </View>

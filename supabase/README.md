@@ -66,7 +66,9 @@
 ### Tabelle Principali
 
 #### `profiles`
+
 Profili utente estesi (collegati ad `auth.users`)
+
 - `id`: UUID (riferimento a auth.users)
 - `username`: TEXT
 - `full_name`: TEXT
@@ -74,7 +76,9 @@ Profili utente estesi (collegati ad `auth.users`)
 - `bio`: TEXT
 
 #### `books`
+
 Catalogo libri
+
 - `id`: UUID
 - `title`, `author`, `isbn`
 - `cover_image_url`, `publisher`, `publication_year`
@@ -83,20 +87,26 @@ Catalogo libri
 - Link store: `amazon_link`, `ibs_link`, `mondadori_link`
 
 #### `book_lines`
+
 Prime righe dei libri
+
 - `id`: UUID
 - `book_id`: UUID → books
 - `line_text`: TEXT (la prima riga del libro)
 - `line_number`: INTEGER (default 1)
 
 #### `user_interactions`
+
 Traccia like/dislike/skip/purchase
+
 - `user_id`: UUID → profiles
 - `book_id`: UUID → books
 - `interaction_type`: ENUM ('like', 'dislike', 'skip', 'purchase')
 
 #### `user_reading_history`
+
 Storico letture
+
 - `user_id`: UUID → profiles
 - `book_id`: UUID → books
 - `read_at`: TIMESTAMP
@@ -105,6 +115,7 @@ Storico letture
 ## 🔒 Row Level Security (RLS)
 
 Tutte le tabelle hanno RLS abilitato:
+
 - ✅ Gli utenti possono leggere i propri dati
 - ✅ Gli utenti possono modificare solo i propri dati
 - ✅ I libri sono pubblici (read-only per tutti)
@@ -113,6 +124,7 @@ Tutte le tabelle hanno RLS abilitato:
 ## 🎯 Next Steps
 
 Dopo aver completato il setup:
+
 1. ✅ Riavvia il server Expo per caricare le nuove variabili d'ambiente
 2. ✅ Testa la connessione con: `npm start`
 3. ✅ Procedi con l'implementazione del Core Domain Layer
@@ -120,13 +132,17 @@ Dopo aver completato il setup:
 ## 🆘 Troubleshooting
 
 ### "Error: Missing environment variables"
+
 → Verifica che `.env` esista e contenga i valori corretti
 
 ### "Error: Invalid API key"
+
 → Assicurati di aver copiato la chiave `anon public` (non `service_role`)
 
 ### "Error: Connection refused"
+
 → Verifica che il Project URL sia corretto e che il progetto sia attivo
 
 ### "Migration failed"
+
 → Vai su SQL Editor > History e controlla gli errori specifici

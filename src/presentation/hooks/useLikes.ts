@@ -51,7 +51,7 @@ export function useToggleLike() {
   return useMutation({
     mutationFn: async ({ bookId, isLiked }: { bookId: string; isLiked: boolean }) => {
       if (!userId) throw new Error('User not authenticated');
-      
+
       const interactionType = !isLiked ? 'like' : 'dislike';
       return await userInteractionRepository.saveInteraction(
         userId,

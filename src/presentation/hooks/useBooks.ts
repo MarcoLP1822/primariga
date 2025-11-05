@@ -1,5 +1,4 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Book } from '../../domain/entities';
 import { SupabaseBookRepository } from '../../data/repositories/SupabaseBookRepository';
 import { useAppStore } from '../../infrastructure/store/store';
 
@@ -7,16 +6,16 @@ const bookRepository = new SupabaseBookRepository();
 
 /**
  * Hook per ottenere un libro casuale
- * Esclude automaticamente i libri già visti
+ * I libri possono essere rivisti più volte
  */
 export function useRandomBook() {
-  const seenBookIds = useAppStore((state) => state.seenBookIds);
   const addSeenBook = useAppStore((state) => state.addSeenBook);
 
   return useQuery({
-    queryKey: ['randomBook', seenBookIds.length],
+    queryKey: ['randomBook'],
     queryFn: async () => {
-      const book = await bookRepository.getRandomBook(seenBookIds);
+      // Non escludiamo più i libri già visti - possono essere rivisti
+      const book = await bookRepository.getRandomBook([]);
       if (book) {
         addSeenBook(book.id);
       }

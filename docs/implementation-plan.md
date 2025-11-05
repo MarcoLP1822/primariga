@@ -1,7 +1,9 @@
 # 🎯 PRIMARIGA - PIANO DI IMPLEMENTAZIONE PRODUCTION-READY
+
 **Versione: 2.0 | Data: 5 Novembre 2025**
 
 Questo piano definisce l'implementazione completa e production-ready di Primariga, seguendo:
+
 - ✅ Clean Architecture & SOLID principles
 - ✅ DRY (Don't Repeat Yourself) approach
 - ✅ Zero breaking changes strategy
@@ -34,19 +36,21 @@ Questo piano definisce l'implementazione completa e production-ready di Primarig
 Costruire **Primariga**, un'applicazione **multi-piattaforma (iOS, Android, Web)** dove l'utente scopre nuove letture "alla cieca" leggendo la prima riga di romanzi e, con un tap/click, apre il link d'acquisto.
 
 ### 🌐 STRATEGIA MULTI-PIATTAFORMA
+
 - **iOS & Android**: App nativa tramite Expo (React Native)
 - **Web**: Progressive Web App (PWA) tramite Expo Web
 - **Codebase Unico**: 95%+ codice condiviso tra tutte le piattaforme
 - **Responsive Design**: Mobile-first, tablet e desktop ottimizzati
 
 ### 🎯 KPI & METRICHE DI SUCCESSO
-- **Performance**: 
+
+- **Performance**:
   - Mobile: App startup < 2s, scroll 60fps
   - Web: Lighthouse score > 90, FCP < 1.5s, LCP < 2.5s
   - API response < 500ms (tutte le piattaforme)
 - **Reliability**: 99.9% uptime, crash-free rate > 99%
 - **Quality**: Code coverage > 80%, zero critical bugs in production
-- **UX**: 
+- **UX**:
   - Mobile: iOS 14+, Android 10+
   - Web: Chrome 90+, Safari 14+, Firefox 88+, Edge 90+
   - Accessibility: WCAG 2.1 AA compliance su tutte le piattaforme
@@ -56,55 +60,55 @@ Costruire **Primariga**, un'applicazione **multi-piattaforma (iOS, Android, Web)
 
 ## ⚙️ STACK TECNICO COMPLETO
 
-| Livello | Tecnologia | Scopo | Versione Minima |
-|---------|-----------|-------|-----------------|
+| Livello                       | Tecnologia                       | Scopo                                 | Versione Minima |
+| ----------------------------- | -------------------------------- | ------------------------------------- | --------------- |
 | **Frontend (Multi-Platform)** |
-| Core Framework | Expo SDK | iOS + Android + Web cross-platform | 50+ |
-| Web Runtime | Expo Web (React DOM) | Web bundle compilation | Latest |
-| Language | TypeScript | Type safety end-to-end | 5.3+ |
-| Routing | Expo Router | File-based routing (universal) | 3.0+ |
-| UI Library | React Native Paper | Componenti accessibili (mobile + web) | 5.0+ |
-| Web-Specific UI | @mui/material (optional) | Componenti web-only avanzati | 5.14+ |
-| Animations | React Native Reanimated | 60fps animations (mobile + web) | 3.6+ |
-| Responsive | React Native Responsive | Breakpoints & media queries | Latest |
-| **State Management** |
-| Global State | Zustand | Lightweight state management | 4.4+ |
-| Server State | TanStack Query (React Query) | Cache, sync, background updates | 5.0+ |
-| Form State | React Hook Form | Performant forms con validazione | 7.48+ |
-| **Backend** |
-| BaaS | Supabase | PostgreSQL + Auth + Storage + RLS | Latest |
-| Type Generation | Supabase CLI | Auto-generate TypeScript types | Latest |
-| **Data & Validation** |
-| Schema Validation | Zod | Runtime type checking | 3.22+ |
-| API Client | Supabase JS SDK | Type-safe queries | Latest |
-| **Testing** |
-| Unit Tests | Jest | Test runner | 29+ |
-| Component Tests | React Native Testing Library | Component testing | 12+ |
-| E2E Tests | Detox | End-to-end automation | 20+ |
-| **Quality & Monitoring** |
-| Linting | ESLint + Prettier | Code quality | Latest |
-| Type Checking | TypeScript strict mode | Zero any types | 5.3+ |
-| Error Tracking | Sentry | Crash reporting & monitoring | Latest |
-| Analytics | PostHog / Mixpanel | User behavior tracking | Latest |
-| **Performance** |
-| Image Optimization | Expo Image | Lazy loading, caching (mobile + web) | Latest |
-| Bundle Analysis | Webpack Bundle Analyzer | Optimize bundle size | Latest |
-| Web Vitals | web-vitals | Core Web Vitals tracking (web) | Latest |
-| **CI/CD** |
-| Repository | GitHub | Source control | - |
-| CI/CD | GitHub Actions | Automated workflows | - |
-| Build Service | Expo EAS | Cloud builds (iOS + Android) | Latest |
-| Web Hosting | Vercel / Netlify | Web app deployment | Latest |
-| Preview Deployments | Expo EAS Update + Vercel Preview | OTA updates + web previews | Latest |
-| **SEO & PWA (Web Only)** |
-| Meta Tags | Next SEO / react-helmet-async | Dynamic meta tags | Latest |
-| PWA | Expo Web PWA config | Service worker, offline support | Latest |
-| Sitemap | next-sitemap | XML sitemap generation | Latest |
-| **Security** |
-| Environment Variables | Expo Env Vars + dotenv | Secret management | Latest |
-| API Security | Supabase RLS Policies | Row-level security | - |
-| **Accessibility** |
-| Testing | @react-native-aria | WCAG 2.1 AA compliance | Latest |
+| Core Framework                | Expo SDK                         | iOS + Android + Web cross-platform    | 50+             |
+| Web Runtime                   | Expo Web (React DOM)             | Web bundle compilation                | Latest          |
+| Language                      | TypeScript                       | Type safety end-to-end                | 5.3+            |
+| Routing                       | Expo Router                      | File-based routing (universal)        | 3.0+            |
+| UI Library                    | React Native Paper               | Componenti accessibili (mobile + web) | 5.0+            |
+| Web-Specific UI               | @mui/material (optional)         | Componenti web-only avanzati          | 5.14+           |
+| Animations                    | React Native Reanimated          | 60fps animations (mobile + web)       | 3.6+            |
+| Responsive                    | React Native Responsive          | Breakpoints & media queries           | Latest          |
+| **State Management**          |
+| Global State                  | Zustand                          | Lightweight state management          | 4.4+            |
+| Server State                  | TanStack Query (React Query)     | Cache, sync, background updates       | 5.0+            |
+| Form State                    | React Hook Form                  | Performant forms con validazione      | 7.48+           |
+| **Backend**                   |
+| BaaS                          | Supabase                         | PostgreSQL + Auth + Storage + RLS     | Latest          |
+| Type Generation               | Supabase CLI                     | Auto-generate TypeScript types        | Latest          |
+| **Data & Validation**         |
+| Schema Validation             | Zod                              | Runtime type checking                 | 3.22+           |
+| API Client                    | Supabase JS SDK                  | Type-safe queries                     | Latest          |
+| **Testing**                   |
+| Unit Tests                    | Jest                             | Test runner                           | 29+             |
+| Component Tests               | React Native Testing Library     | Component testing                     | 12+             |
+| E2E Tests                     | Detox                            | End-to-end automation                 | 20+             |
+| **Quality & Monitoring**      |
+| Linting                       | ESLint + Prettier                | Code quality                          | Latest          |
+| Type Checking                 | TypeScript strict mode           | Zero any types                        | 5.3+            |
+| Error Tracking                | Sentry                           | Crash reporting & monitoring          | Latest          |
+| Analytics                     | PostHog / Mixpanel               | User behavior tracking                | Latest          |
+| **Performance**               |
+| Image Optimization            | Expo Image                       | Lazy loading, caching (mobile + web)  | Latest          |
+| Bundle Analysis               | Webpack Bundle Analyzer          | Optimize bundle size                  | Latest          |
+| Web Vitals                    | web-vitals                       | Core Web Vitals tracking (web)        | Latest          |
+| **CI/CD**                     |
+| Repository                    | GitHub                           | Source control                        | -               |
+| CI/CD                         | GitHub Actions                   | Automated workflows                   | -               |
+| Build Service                 | Expo EAS                         | Cloud builds (iOS + Android)          | Latest          |
+| Web Hosting                   | Vercel / Netlify                 | Web app deployment                    | Latest          |
+| Preview Deployments           | Expo EAS Update + Vercel Preview | OTA updates + web previews            | Latest          |
+| **SEO & PWA (Web Only)**      |
+| Meta Tags                     | Next SEO / react-helmet-async    | Dynamic meta tags                     | Latest          |
+| PWA                           | Expo Web PWA config              | Service worker, offline support       | Latest          |
+| Sitemap                       | next-sitemap                     | XML sitemap generation                | Latest          |
+| **Security**                  |
+| Environment Variables         | Expo Env Vars + dotenv           | Secret management                     | Latest          |
+| API Security                  | Supabase RLS Policies            | Row-level security                    | -               |
+| **Accessibility**             |
+| Testing                       | @react-native-aria               | WCAG 2.1 AA compliance                | Latest          |
 
 ---
 
@@ -229,6 +233,7 @@ primariga/
 ```
 
 ### **🎯 PRINCIPI ARCHITETTURALI:**
+
 - **Platform Agnostic Core**: Business logic indipendente dalla piattaforma
 - **Dependency Inversion**: Core non dipende da infrastructure
 - **DRY**: Componenti, hooks, utilities riutilizzabili tra tutte le piattaforme
@@ -269,17 +274,17 @@ CREATE TABLE books (
   published_year INTEGER CHECK (published_year > 1000 AND published_year <= EXTRACT(YEAR FROM CURRENT_DATE)),
   isbn TEXT,
   cover_image_url TEXT,
-  
+
   -- Metadata
   created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc', NOW()) NOT NULL,
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc', NOW()) NOT NULL,
   deleted_at TIMESTAMP WITH TIME ZONE, -- Soft delete
-  
+
   -- Analytics
   view_count INTEGER DEFAULT 0 CHECK (view_count >= 0),
   like_count INTEGER DEFAULT 0 CHECK (like_count >= 0),
   click_count INTEGER DEFAULT 0 CHECK (click_count >= 0),
-  
+
   -- Versioning
   version INTEGER DEFAULT 1 NOT NULL
 );
@@ -289,9 +294,9 @@ CREATE TABLE likes (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
   book_id UUID NOT NULL REFERENCES books(id) ON DELETE CASCADE,
-  
+
   created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc', NOW()) NOT NULL,
-  
+
   -- Prevent duplicate likes
   UNIQUE(user_id, book_id)
 );
@@ -302,7 +307,7 @@ CREATE TABLE user_preferences (
   preferred_genres TEXT[],
   preferred_languages TEXT[] DEFAULT ARRAY['it'],
   notification_enabled BOOLEAN DEFAULT TRUE,
-  
+
   created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc', NOW()) NOT NULL,
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc', NOW()) NOT NULL
 );
@@ -314,7 +319,7 @@ CREATE TABLE analytics_events (
   event_type TEXT NOT NULL CHECK (event_type IN ('view', 'like', 'unlike', 'click', 'share')),
   book_id UUID REFERENCES books(id) ON DELETE SET NULL,
   metadata JSONB DEFAULT '{}',
-  
+
   created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc', NOW()) NOT NULL
 );
 
@@ -432,7 +437,7 @@ CREATE TRIGGER update_book_like_count_trigger
 
 -- Popular books view
 CREATE VIEW popular_books AS
-SELECT 
+SELECT
   id, title, first_line, author, buy_link, genre, language,
   like_count, view_count, click_count,
   created_at
@@ -442,7 +447,7 @@ ORDER BY like_count DESC, view_count DESC;
 
 -- Recent books view
 CREATE VIEW recent_books AS
-SELECT 
+SELECT
   id, title, first_line, author, buy_link, genre, language,
   created_at
 FROM books
@@ -451,6 +456,7 @@ ORDER BY created_at DESC;
 ```
 
 ### **🔒 SECURITY FEATURES:**
+
 - ✅ Row Level Security (RLS) attiva su tutte le tabelle
 - ✅ Policies granulari per ogni operazione
 - ✅ Validazione constraints a livello database
@@ -459,12 +465,14 @@ ORDER BY created_at DESC;
 - ✅ Service role separation per operazioni admin
 
 ### **📊 PERFORMANCE OPTIMIZATIONS:**
+
 - ✅ Indexes su tutte le query frequenti
 - ✅ Materialized views per analytics (future)
 - ✅ Partitioning per analytics_events (se necessario)
 - ✅ Automatic counter updates via triggers
 
 ### **🔄 BACKWARD COMPATIBILITY STRATEGY:**
+
 - Ogni migration ha un numero di versione
 - Schema changes sempre additive (mai breaking)
 - Soft deletes invece di hard deletes
@@ -475,6 +483,7 @@ ORDER BY created_at DESC;
 ## 🚀 ROADMAP DI IMPLEMENTAZIONE - PRODUCTION READY
 
 Vedi il piano originale per tutti i dettagli delle fasi 0-13 che coprono:
+
 - Setup completo (repo, Supabase, environment)
 - Database schema e type generation
 - Core domain layer con use cases
@@ -496,6 +505,7 @@ Vedi il piano originale per tutti i dettagli delle fasi 0-13 che coprono:
 ## 🧠 PRINCIPI DI SVILUPPO & BEST PRACTICES
 
 ### **🎯 Code Quality Standards**
+
 - **TypeScript Strict Mode**: Zero `any` types permessi
 - **ESLint Rules**: Airbnb config + custom rules, no warnings
 - **Code Coverage**: Minimo 80%, critical paths 100%
@@ -503,6 +513,7 @@ Vedi il piano originale per tutti i dettagli delle fasi 0-13 che coprono:
 - **Pull Request Reviews**: Minimo 1 approval, tutti i test passano
 
 ### **🏗️ Architectural Principles**
+
 - **SOLID Principles**: Single responsibility, dependency inversion
 - **DRY (Don't Repeat Yourself)**: Componenti, hooks, utilities riutilizzabili
 - **KISS (Keep It Simple)**: Soluzioni semplici preferite a complesse
@@ -510,6 +521,7 @@ Vedi il piano originale per tutti i dettagli delle fasi 0-13 che coprono:
 - **Separation of Concerns**: Domain ≠ Data ≠ Presentation
 
 ### **🔄 Backward Compatibility Rules**
+
 - **API Versioning**: Endpoints versionati se cambiano
 - **Database Migrations**: Solo additive changes, mai breaking
 - **Feature Flags**: Rollout graduale nuove feature
@@ -517,6 +529,7 @@ Vedi il piano originale per tutti i dettagli delle fasi 0-13 che coprono:
 - **Semantic Versioning**: MAJOR.MINOR.PATCH strict
 
 ### **⚡ Performance Guidelines**
+
 - **App Launch**: < 2 secondi cold start
 - **Scroll Performance**: 60fps costanti
 - **API Latency**: < 500ms percentile 95
@@ -524,6 +537,7 @@ Vedi il piano originale per tutti i dettagli delle fasi 0-13 che coprono:
 - **Memory Usage**: < 150MB average
 
 ### **🔒 Security Checklist**
+
 - ✅ Environment variables mai in version control
 - ✅ Supabase RLS policies testate con unit tests
 - ✅ Input validation sia client che server-side
@@ -532,6 +546,7 @@ Vedi il piano originale per tutti i dettagli delle fasi 0-13 che coprono:
 - ✅ Secrets rotation ogni 90 giorni
 
 ### **📈 Monitoring & Observability**
+
 - **Error Tracking**: Sentry con breadcrumbs completi
 - **Analytics**: User flows, conversion funnels
 - **Performance**: APM metrics (Sentry Performance)
@@ -543,6 +558,7 @@ Vedi il piano originale per tutti i dettagli delle fasi 0-13 che coprono:
 ## 🎯 DEFINITION OF DONE
 
 Una feature è "Done" quando:
+
 - [ ] Codice implementato e reviewed
 - [ ] Unit tests scritti (coverage > 80%)
 - [ ] Integration tests se necessario
@@ -558,19 +574,19 @@ Una feature è "Done" quando:
 
 ## 📊 DIFFERENZE CHIAVE CON PIANO ORIGINALE
 
-| Aspetto | Piano Originale | Piano V2 Production-Ready |
-|---------|----------------|---------------------------|
-| **Type Safety** | Solo TypeScript base | Auto-generated types da Supabase + strict mode |
-| **Error Handling** | ❌ Assente | Result pattern + Sentry + Error Boundaries |
-| **Testing** | ❌ Vagamente menzionato | Strategia completa con >80% coverage target |
-| **Security** | RLS basic | RLS + validation + secrets management + audits |
-| **Performance** | ❌ Non considerata | Caching, optimization, monitoring completo |
-| **State Management** | Solo Zustand | Zustand (client) + React Query (server) |
-| **CI/CD** | ❌ Vago | Pipeline completa con quality gates |
-| **Accessibility** | ❌ Ignorata | WCAG 2.1 AA compliance |
-| **Monitoring** | ❌ Assente | Sentry + Analytics + Performance APM |
-| **Architecture** | Struttura base | Clean Architecture con SOLID + DRY |
-| **Backward Compatibility** | ❌ Non pianificata | Versioned migrations + feature flags |
+| Aspetto                    | Piano Originale         | Piano V2 Production-Ready                      |
+| -------------------------- | ----------------------- | ---------------------------------------------- |
+| **Type Safety**            | Solo TypeScript base    | Auto-generated types da Supabase + strict mode |
+| **Error Handling**         | ❌ Assente              | Result pattern + Sentry + Error Boundaries     |
+| **Testing**                | ❌ Vagamente menzionato | Strategia completa con >80% coverage target    |
+| **Security**               | RLS basic               | RLS + validation + secrets management + audits |
+| **Performance**            | ❌ Non considerata      | Caching, optimization, monitoring completo     |
+| **State Management**       | Solo Zustand            | Zustand (client) + React Query (server)        |
+| **CI/CD**                  | ❌ Vago                 | Pipeline completa con quality gates            |
+| **Accessibility**          | ❌ Ignorata             | WCAG 2.1 AA compliance                         |
+| **Monitoring**             | ❌ Assente              | Sentry + Analytics + Performance APM           |
+| **Architecture**           | Struttura base          | Clean Architecture con SOLID + DRY             |
+| **Backward Compatibility** | ❌ Non pianificata      | Versioned migrations + feature flags           |
 
 ---
 
@@ -584,6 +600,6 @@ Questo piano V2 trasforma l'idea originale in un'implementazione **production-re
 ✅ **Performante** - Caching, optimization, 60fps garantiti  
 ✅ **Affidabile** - Error handling, monitoring, 99.9% uptime  
 ✅ **Accessible** - WCAG 2.1 AA compliance  
-✅ **Future-proof** - Backward compatibility, versioning, feature flags  
+✅ **Future-proof** - Backward compatibility, versioning, feature flags
 
 Pronto per iniziare lo sviluppo! 🚀

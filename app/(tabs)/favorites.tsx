@@ -30,10 +30,7 @@ export default function FavoritesScreen() {
   if (error) {
     return (
       <View style={styles.centerContainer}>
-        <ErrorMessage 
-          message="Errore nel caricamento dei preferiti" 
-          onRetry={refetch}
-        />
+        <ErrorMessage message="Errore nel caricamento dei preferiti" onRetry={refetch} />
       </View>
     );
   }
@@ -68,9 +65,7 @@ export default function FavoritesScreen() {
       )}
       ListHeaderComponent={
         <View style={styles.header}>
-          <Text variant="titleLarge">
-            ❤️ I tuoi preferiti ({likedBooks.length})
-          </Text>
+          <Text variant="titleLarge">❤️ I tuoi preferiti ({likedBooks.length})</Text>
         </View>
       }
     />

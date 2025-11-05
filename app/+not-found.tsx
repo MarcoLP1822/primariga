@@ -20,12 +20,7 @@ export default function NotFoundScreen() {
       <Text variant="bodyLarge" style={styles.subtitle}>
         Ops! Sembra che questa pagina non esista.
       </Text>
-      <Button
-        mode="contained"
-        onPress={() => router.push('/')}
-        style={styles.button}
-        icon="home"
-      >
+      <Button mode="contained" onPress={() => router.push('/')} style={styles.button} icon="home">
         Torna alla Home
       </Button>
     </View>

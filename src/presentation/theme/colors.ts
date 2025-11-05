@@ -10,7 +10,7 @@ export const colors = {
     dark: '#0F1E3A',
     contrast: '#FFFFFF',
   },
-  
+
   // Secondary - Oro caldo per gli accenti
   secondary: {
     main: '#D4AF37',
@@ -18,14 +18,14 @@ export const colors = {
     dark: '#A68521',
     contrast: '#1E3A5F',
   },
-  
+
   // Background
   background: {
     default: '#FAFAFA',
     paper: '#FFFFFF',
     elevated: '#F5F5F5',
   },
-  
+
   // Text
   text: {
     primary: '#1A1A1A',
@@ -33,43 +33,43 @@ export const colors = {
     disabled: '#999999',
     hint: '#BBBBBB',
   },
-  
+
   // Surface
   surface: {
     main: '#FFFFFF',
     variant: '#F5F5F5',
     disabled: '#E0E0E0',
   },
-  
+
   // Status colors
   success: {
     main: '#4CAF50',
     light: '#81C784',
     dark: '#388E3C',
   },
-  
+
   error: {
     main: '#F44336',
     light: '#E57373',
     dark: '#D32F2F',
   },
-  
+
   warning: {
     main: '#FF9800',
     light: '#FFB74D',
     dark: '#F57C00',
   },
-  
+
   info: {
     main: '#2196F3',
     light: '#64B5F6',
     dark: '#1976D2',
   },
-  
+
   // Dividers and borders
   divider: '#E0E0E0',
   border: '#CCCCCC',
-  
+
   // Overlay
   overlay: 'rgba(0, 0, 0, 0.5)',
   scrim: 'rgba(0, 0, 0, 0.32)',

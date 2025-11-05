@@ -1,0 +1,89 @@
+name: PR - Quality Gate
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+  pull-requests: write
+  checks: write
+
+jobs:
+  # Analisi completa PR
+  pr-analysis:
+    name: 📊 PR Analysis
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Full history per analisi diff
+
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: 📥 Install dependencies
+        run: npm ci
+
+      - name: 🧪 Run all tests
+        run: npm test -- --coverage --passWithNoTests
+        
+      - name: 📊 Generate test summary
+        if: always()
+        run: |
+          echo "## 🧪 Test Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          if [ -f coverage/coverage-summary.json ]; then
+            echo "✅ Tests completed" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "⚠️ No coverage report found" >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: 🔍 Lint changed files
+        run: npm run lint
+
+      - name: 🔷 Type check
+        run: npm run type-check
+
+      - name: 📝 Check code formatting
+        run: npm run format:check
+
+  # Quality gate
+  quality-gate:
+    name: 🚦 Quality Gate
+    runs-on: ubuntu-latest
+    needs: [pr-analysis]
+    
+    steps:
+      - name: ✅ All checks passed
+        run: echo "✅ PR ready for review!"
+
+  # Comment su PR con risultati
+  pr-comment:
+    name: 💬 Comment PR
+    runs-on: ubuntu-latest
+    needs: [pr-analysis]
+    if: always()
+    
+    steps:
+      - name: 💬 Add comment to PR
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const status = '${{ needs.pr-analysis.result }}';
+            const emoji = status === 'success' ? '✅' : '❌';
+            const message = status === 'success' 
+              ? 'All quality checks passed! This PR is ready for review.' 
+              : 'Some quality checks failed. Please review and fix issues.';
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `${emoji} **Quality Check ${status === 'success' ? 'Passed' : 'Failed'}**\n\n${message}`
+            });

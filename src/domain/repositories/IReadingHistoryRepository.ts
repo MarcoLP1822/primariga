@@ -7,17 +7,13 @@ export interface IReadingHistoryRepository {
   /**
    * Salva una lettura nello storico
    */
-  saveReading(
-    userId: string,
-    bookId: string,
-    durationSeconds?: number
-  ): Promise<ReadingHistory>;
-  
+  saveReading(userId: string, bookId: string, durationSeconds?: number): Promise<ReadingHistory>;
+
   /**
    * Traccia che l'utente ha visto una book line
    */
   trackReading(userId: string, bookLineId: string): Promise<ReadingHistory>;
-  
+
   /**
    * Ottiene lo storico letture di un utente (alias)
    */

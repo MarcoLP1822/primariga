@@ -96,7 +96,6 @@ async function testConnection() {
     }
 
     console.log('🎉 All tests passed! Your Supabase connection is working correctly.\n');
-
   } catch (error) {
     console.error('❌ Test failed:', error);
     console.log('\n📋 Troubleshooting:');

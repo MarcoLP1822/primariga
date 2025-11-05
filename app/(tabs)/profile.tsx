@@ -45,7 +45,7 @@ export default function ProfileScreen() {
             📊 Statistiche
           </Text>
           <Divider style={styles.divider} />
-          
+
           <View style={styles.statRow}>
             <Text variant="bodyLarge">❤️ Libri preferiti:</Text>
             <Text variant="titleLarge" style={styles.statValue}>
@@ -69,8 +69,8 @@ export default function ProfileScreen() {
           </Text>
           <Divider style={styles.divider} />
           <Text variant="bodyMedium" style={styles.infoText}>
-            Primariga ti aiuta a scoprire nuove letture in modo unico: leggi la prima riga di un libro 
-            e decidi se ti incuriosisce abbastanza da volerlo acquistare.
+            Primariga ti aiuta a scoprire nuove letture in modo unico: leggi la prima riga di un
+            libro e decidi se ti incuriosisce abbastanza da volerlo acquistare.
           </Text>
           <Text variant="bodyMedium" style={styles.infoText}>
             Esplora, salva i tuoi preferiti e trova il tuo prossimo libro da leggere!
@@ -84,7 +84,7 @@ export default function ProfileScreen() {
             ⚙️ Azioni
           </Text>
           <Divider style={styles.divider} />
-          
+
           <Button
             mode="outlined"
             onPress={clearSeenBooks}

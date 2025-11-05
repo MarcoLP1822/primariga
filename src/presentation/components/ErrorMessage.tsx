@@ -14,19 +14,12 @@ export interface ErrorMessageProps {
  * ErrorMessage Component
  * Messaggio di errore con pulsante retry
  */
-export const ErrorMessage: React.FC<ErrorMessageProps> = ({
-  message,
-  onRetry,
-  style,
-}) => {
+export const ErrorMessage: React.FC<ErrorMessageProps> = ({ message, onRetry, style }) => {
   const theme = useTheme();
-  
+
   return (
     <View style={[styles.container, style]}>
-      <Text
-        variant="bodyLarge"
-        style={[styles.message, { color: theme.colors.error }]}
-      >
+      <Text variant="bodyLarge" style={[styles.message, { color: theme.colors.error }]}>
         {message}
       </Text>
       {onRetry && (

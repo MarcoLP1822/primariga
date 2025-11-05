@@ -4,6 +4,9 @@ export { BookLineCard } from './BookLineCard';
 export { BookInfoCard } from './BookInfoCard';
 export { LoadingSpinner } from './LoadingSpinner';
 export { ErrorMessage } from './ErrorMessage';
+export { ErrorBoundary } from './ErrorBoundary';
+export { RouteErrorBoundary } from './RouteErrorBoundary';
+export { OptimizedImage } from './OptimizedImage';
 
 export type { CardProps } from './Card';
 export type { ButtonProps } from './Button';

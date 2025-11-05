@@ -28,7 +28,7 @@ export const BookLineCard: React.FC<BookLineCardProps> = ({
 }) => {
   const theme = useTheme();
   const { data: bookLine, isLoading } = useBookLine(book.id);
-  
+
   return (
     <View
       style={[
@@ -42,7 +42,7 @@ export const BookLineCard: React.FC<BookLineCardProps> = ({
     >
       {isLoading ? (
         <LoadingSpinner />
-      ) : (
+      ) : bookLine ? (
         <>
           <Text
             style={[
@@ -54,9 +54,9 @@ export const BookLineCard: React.FC<BookLineCardProps> = ({
               textStyle,
             ]}
           >
-            "{bookLine?.lineText || 'Prima riga non disponibile'}"
+            <Text style={styles.lineText}>&ldquo;{bookLine.lineText}&rdquo;</Text>
           </Text>
-          
+
           {onLikePress && (
             <IconButton
               icon={isLiked ? 'heart' : 'heart-outline'}
@@ -67,6 +67,8 @@ export const BookLineCard: React.FC<BookLineCardProps> = ({
             />
           )}
         </>
+      ) : (
+        <Text style={styles.errorText}>Impossibile caricare la prima riga</Text>
       )}
     </View>
   );
@@ -84,6 +86,10 @@ const styles = StyleSheet.create({
   },
   lineText: {
     textAlign: 'center',
+  },
+  errorText: {
+    textAlign: 'center',
+    opacity: 0.6,
   },
   likeButton: {
     position: 'absolute',

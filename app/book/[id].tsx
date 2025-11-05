@@ -38,10 +38,7 @@ export default function BookDetailScreen() {
   if (error || !book) {
     return (
       <View style={styles.centerContainer}>
-        <ErrorMessage 
-          message="Errore nel caricamento del libro" 
-          onRetry={() => router.back()}
-        />
+        <ErrorMessage message="Errore nel caricamento del libro" onRetry={() => router.back()} />
       </View>
     );
   }
@@ -49,11 +46,7 @@ export default function BookDetailScreen() {
   return (
     <ScrollView style={styles.container}>
       {book.coverImageUrl && (
-        <Image
-          source={{ uri: book.coverImageUrl }}
-          style={styles.coverImage}
-          resizeMode="cover"
-        />
+        <Image source={{ uri: book.coverImageUrl }} style={styles.coverImage} resizeMode="cover" />
       )}
 
       <View style={styles.content}>
