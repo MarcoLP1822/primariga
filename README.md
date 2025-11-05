@@ -247,6 +247,18 @@ npm test
 npm run test:watch
 
 # Coverage report
+## 🧪 Testing
+
+### Run Tests Locally
+
+```bash
+# Run all tests
+npm test
+
+# Watch mode
+npm run test:watch
+
+# Coverage report
 npm run test:coverage
 
 # Test specific file
@@ -272,7 +284,30 @@ npm test -- Book.test.ts
  /____________\
 ```
 
-**See**: [Testing Guide](./docs/TESTING.md) for details.
+### Testing on Real Devices
+
+**Quick Start - iOS Testing**:
+
+```bash
+# Opzione 1: Expo Go (velocissima, 0 build time)
+npm start
+# Scansiona QR con Expo Go app su iPhone
+
+# Opzione 2: Development build (tutte le feature native)
+npm install -g eas-cli
+eas login
+npm run build:dev:ios      # Build per iPhone (~20 min)
+
+# Opzione 3: TestFlight (beta testing pubblico)
+npm run build:prod:ios     # Build production
+npm run submit:ios         # Submit a TestFlight
+```
+
+**📱 iOS Quick Guide**: [QUICKSTART_IOS_TESTING.md](./QUICKSTART_IOS_TESTING.md)  
+**✅ iOS Checklist**: [Testing Checklist iOS](./docs/TESTING_CHECKLIST_IOS.md)  
+**📚 Complete Guide**: [Device Testing Documentation](./docs/DEVICE_TESTING.md)
+
+**See**: [Testing Guide](./docs/TESTING.md) for unit/integration tests details.
 
 ---
 

@@ -193,6 +193,7 @@ export class SupabaseBookRepository implements IBookRepository {
 
     if (error) {
       console.error('Error incrementing view count:', error);
+      // Non-blocking: analytics failure doesn't break the app
     }
   }
 
@@ -202,6 +203,7 @@ export class SupabaseBookRepository implements IBookRepository {
 
     if (error) {
       console.error('Error incrementing click count:', error);
+      // Non-blocking: analytics failure doesn't break the app
     }
   }
 }

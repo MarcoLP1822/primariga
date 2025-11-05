@@ -90,7 +90,9 @@ const styles = StyleSheet.create({
   },
   emptyIcon: {
     fontSize: 64,
+    lineHeight: 80,
     marginBottom: spacing.md,
+    textAlign: 'center',
   },
   emptyTitle: {
     textAlign: 'center',

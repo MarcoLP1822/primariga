@@ -3,7 +3,7 @@ import { Text, Card, Button, Divider } from 'react-native-paper';
 import { useLikedBooks } from '../../src/presentation/hooks/useLikes';
 import { useAppStore } from '../../src/infrastructure/store/store';
 import { spacing } from '../../src/presentation/theme/spacing';
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 
 /**
  * Profile Screen - Profilo utente con statistiche
@@ -65,11 +65,11 @@ export default function ProfileScreen() {
       <Card style={styles.infoCard} mode="elevated">
         <Card.Content>
           <Text variant="titleMedium" style={styles.infoTitle}>
-            🎭 Cos'è Primariga?
+            🎭 Cos&apos;è Primariga?
           </Text>
           <Divider style={styles.divider} />
           <Text variant="bodyMedium" style={styles.infoText}>
-            Primariga ti aiuta a scoprire nuove letture in modo unico: leggi la prima riga di un
+            Primariga ti aiuta a scoprire nuove letture in modo unico: leggi la prima frase di un
             libro e decidi se ti incuriosisce abbastanza da volerlo acquistare.
           </Text>
           <Text variant="bodyMedium" style={styles.infoText}>
@@ -120,7 +120,9 @@ const styles = StyleSheet.create({
   },
   emoji: {
     fontSize: 64,
+    lineHeight: 80,
     marginBottom: spacing.sm,
+    textAlign: 'center',
   },
   title: {
     textAlign: 'center',

@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, View, ViewStyle, TextStyle } from 'react-native';
-import { Text, IconButton, useTheme } from 'react-native-paper';
+import { Text, useTheme } from 'react-native-paper';
 import { textStyles } from '../theme/typography';
 import { spacing } from '../theme/spacing';
 import { Book } from '../../domain/entities';
@@ -9,8 +9,6 @@ import { LoadingSpinner } from './LoadingSpinner';
 
 export interface BookLineCardProps {
   book: Book;
-  onLikePress?: () => void;
-  isLiked?: boolean;
   style?: ViewStyle;
   textStyle?: TextStyle;
 }
@@ -19,13 +17,7 @@ export interface BookLineCardProps {
  * BookLineCard Component
  * Card specializzata per mostrare la prima riga di un libro
  */
-export const BookLineCard: React.FC<BookLineCardProps> = ({
-  book,
-  onLikePress,
-  isLiked = false,
-  style,
-  textStyle,
-}) => {
+export const BookLineCard: React.FC<BookLineCardProps> = ({ book, style, textStyle }) => {
   const theme = useTheme();
   const { data: bookLine, isLoading } = useBookLine(book.id);
 
@@ -43,32 +35,22 @@ export const BookLineCard: React.FC<BookLineCardProps> = ({
       {isLoading ? (
         <LoadingSpinner />
       ) : bookLine ? (
-        <>
+        <View style={styles.contentWrapper}>
           <Text
             style={[
-              styles.lineText,
               {
                 color: theme.colors.onSurface,
                 ...textStyles.bookLine,
               },
+              styles.lineText, // Applied after to override lineHeight
               textStyle,
             ]}
           >
-            <Text style={styles.lineText}>&ldquo;{bookLine.lineText}&rdquo;</Text>
+            &ldquo;{bookLine.lineText}&rdquo;
           </Text>
-
-          {onLikePress && (
-            <IconButton
-              icon={isLiked ? 'heart' : 'heart-outline'}
-              iconColor={isLiked ? theme.colors.error : theme.colors.onSurfaceVariant}
-              size={28}
-              onPress={onLikePress}
-              style={styles.likeButton}
-            />
-          )}
-        </>
+        </View>
       ) : (
-        <Text style={styles.errorText}>Impossibile caricare la prima riga</Text>
+        <Text style={styles.errorText}>Impossibile caricare la prima frase</Text>
       )}
     </View>
   );
@@ -80,20 +62,25 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     borderWidth: 1,
     minHeight: 200,
+    width: '100%',
     justifyContent: 'center',
     alignItems: 'center',
     position: 'relative',
   },
+  contentWrapper: {
+    width: '100%',
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   lineText: {
     textAlign: 'center',
+    width: '100%',
+    flexWrap: 'wrap',
+    lineHeight: 30, // Override textStyles.bookLine lineHeight to prevent text overlap
   },
   errorText: {
     textAlign: 'center',
     opacity: 0.6,
-  },
-  likeButton: {
-    position: 'absolute',
-    top: spacing.xs,
-    right: spacing.xs,
   },
 });

@@ -104,18 +104,24 @@ export default function HomeScreen() {
           🎭 Scopri una nuova lettura
         </Text>
         <Text variant="bodyMedium" style={styles.subtitle}>
-          Leggi la prima riga e decidi se ti piace
+          Leggi la prima frase e decidi se ti piace
         </Text>
       </View>
 
-      <BookLineCard
-        book={book}
-        onLikePress={handleLike}
-        isLiked={isLiked ?? false}
-        style={styles.bookCard}
-      />
+      <BookLineCard book={book} style={styles.bookCard} />
 
       <View style={styles.actionsContainer}>
+        <PaperButton
+          mode="outlined"
+          onPress={handleLike}
+          style={styles.actionButton}
+          icon={isLiked ? 'heart' : 'heart-outline'}
+          buttonColor={isLiked ? undefined : undefined}
+          textColor={isLiked ? '#ef4444' : undefined}
+        >
+          {isLiked ? 'Salvato' : 'Salva'}
+        </PaperButton>
+
         <PaperButton
           mode="outlined"
           onPress={handleShowDetails}
@@ -190,9 +196,7 @@ const styles = StyleSheet.create({
   actionButton: {
     flex: 1,
   },
-  buyButton: {
-    flex: 2,
-  },
+  buyButton: {},
   nextContainer: {
     alignItems: 'center',
     marginTop: spacing.md,

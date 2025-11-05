@@ -91,27 +91,34 @@ I tuoi appunti erano **obsoleti** e contenevano molti errori. Ecco cosa è **GI�
 ---
 
 #### 3. **Test su Dispositivi Reali** ⏱️ 2-3 giorni
-**Status**: Probabilmente testato solo su emulatore  
-**Necessario**: Test su iOS + Android fisici
+**Status**: ✅ SETUP COMPLETO - Pronto per esecuzione  
+**Documentazione**: Creata guida completa + checklist
 
-**Task**:
-- [ ] Build development con `expo build`
-- [ ] Test su iPhone reale (iOS 14+)
-- [ ] Test su Android reale (Android 10+)
-- [ ] Verificare performance (60fps scroll)
-- [ ] Test connessione lenta/offline
-- [ ] Test su diverse dimensioni schermo
-- [ ] Raccogliere feedback UX da 5-10 beta tester
-- [ ] Fix bug trovati
+**Files Creati**:
+- ✅ `eas.json` - Configurazione build iOS/Android
+- ✅ `QUICKSTART_TESTING.md` - Setup in 5 minuti
+- ✅ `docs/DEVICE_TESTING.md` - Guida completa (1200+ righe)
+- ✅ `docs/TESTING_CHECKLIST.md` - Checklist dettagliata per testers
+- ✅ Scripts npm aggiunti per build (development, preview, production)
 
-**Checklist Test**:
-- [ ] Scroll fluido nel feed
-- [ ] Like/unlike funziona
-- [ ] Link acquisto si aprono correttamente
-- [ ] Navigazione tra tab
-- [ ] Dettaglio libro in modal
-- [ ] Pull-to-refresh funziona
-- [ ] Immagini caricano correttamente
+**Prossimi Step**:
+- [ ] Eseguire `npm run build:dev:ios` per iPhone
+- [ ] Eseguire `npm run build:dev:android` per Android
+- [ ] Installare su dispositivi reali e seguire `TESTING_CHECKLIST.md`
+- [ ] Raccogliere feedback da 5-10 beta tester
+- [ ] Fix bug trovati durante testing
+- [ ] Validare performance su device meno recenti (iOS 14, Android 10)
+
+**Comando Rapido**:
+```bash
+# Setup EAS (una volta sola)
+npm install -g eas-cli
+eas login
+eas build:configure
+
+# Build per Android (più veloce per iniziare)
+npm run build:dev:android
+```
 
 ---
 
