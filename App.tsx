@@ -44,7 +44,7 @@ export default function App() {
           <StatusBar style="auto" />
 
           <Text variant="displaySmall" style={styles.title}>
-            🎭 Primariga
+            Primariga
           </Text>
           <Text variant="titleMedium" style={styles.subtitle}>
             Scopri nuove letture alla cieca

@@ -1,9 +1,9 @@
 import { View, StyleSheet, ScrollView } from 'react-native';
-import { Text, Card, Button, Divider } from 'react-native-paper';
+import { Text, Card } from 'react-native-paper';
 import { useLikedBooks } from '../../src/presentation/hooks/useLikes';
 import { useAppStore } from '../../src/infrastructure/store/store';
 import { spacing } from '../../src/presentation/theme/spacing';
-import { useEffect } from 'react';
+import { Button, Divider } from '../../src/presentation/components';
 
 /**
  * Profile Screen - Profilo utente con statistiche
@@ -12,16 +12,6 @@ export default function ProfileScreen() {
   const { data: likedBooks } = useLikedBooks();
   const seenBookIds = useAppStore((state) => state.seenBookIds);
   const clearSeenBooks = useAppStore((state) => state.clearSeenBooks);
-  const userId = useAppStore((state) => state.userId);
-  const setUser = useAppStore((state) => state.setUser);
-
-  // Genera un ID utente se non esiste (per MVP, in futuro con auth Supabase)
-  useEffect(() => {
-    if (!userId) {
-      const tempUserId = `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-      setUser(tempUserId);
-    }
-  }, [userId, setUser]);
 
   const stats = {
     liked: likedBooks?.length || 0,
@@ -65,7 +55,7 @@ export default function ProfileScreen() {
       <Card style={styles.infoCard} mode="elevated">
         <Card.Content>
           <Text variant="titleMedium" style={styles.infoTitle}>
-            🎭 Cos&apos;è Primariga?
+            Cos&apos;è Primariga?
           </Text>
           <Divider style={styles.divider} />
           <Text variant="bodyMedium" style={styles.infoText}>

@@ -8,15 +8,36 @@ import { lightTheme } from '../src/presentation/theme';
 import { queryClient } from '../src/infrastructure/config/queryClient';
 import { initSentry } from '../src/infrastructure/monitoring/sentry';
 import { ErrorBoundary } from '../src/presentation/components/ErrorBoundary';
+import { useAppStore } from '../src/infrastructure/store/store';
+
+/**
+ * Genera un UUID v4 valido
+ */
+function generateUUID(): string {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+    const r = (Math.random() * 16) | 0;
+    const v = c === 'x' ? r : (r & 0x3) | 0x8;
+    return v.toString(16);
+  });
+}
 
 /**
  * Root Layout - Configura providers globali e navigazione
  */
 export default function RootLayout() {
-  // Inizializza Sentry all'avvio
+  const userId = useAppStore((state) => state.userId);
+  const setUser = useAppStore((state) => state.setUser);
+
+  // Inizializza Sentry e userId all'avvio
   useEffect(() => {
     initSentry();
-  }, []);
+    
+    // Genera un ID utente se non esiste (per MVP, in futuro con auth Supabase)
+    if (!userId) {
+      const tempUserId = generateUUID();
+      setUser(tempUserId);
+    }
+  }, [userId, setUser]);
 
   return (
     <ErrorBoundary>

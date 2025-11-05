@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { SupabaseUserInteractionRepository } from '../../data/repositories/SupabaseUserInteractionRepository';
 import { SupabaseBookRepository } from '../../data/repositories/SupabaseBookRepository';
 import { useAppStore } from '../../infrastructure/store/store';
+import { InteractionType } from '../../domain/entities/UserInteraction';
 
 const userInteractionRepository = new SupabaseUserInteractionRepository();
 const bookRepository = new SupabaseBookRepository();
@@ -52,12 +53,17 @@ export function useToggleLike() {
     mutationFn: async ({ bookId, isLiked }: { bookId: string; isLiked: boolean }) => {
       if (!userId) throw new Error('User not authenticated');
 
-      const interactionType = !isLiked ? 'like' : 'dislike';
-      return await userInteractionRepository.saveInteraction(
-        userId,
-        bookId,
-        interactionType as any
-      );
+      if (isLiked) {
+        // Se già piaciuto, rimuovi l'interazione
+        return await userInteractionRepository.removeInteraction(userId, bookId);
+      } else {
+        // Altrimenti aggiungi il like
+        return await userInteractionRepository.saveInteraction(
+          userId,
+          bookId,
+          InteractionType.LIKE
+        );
+      }
     },
     onSuccess: (_, { bookId }) => {
       // Invalida cache per aggiornare UI

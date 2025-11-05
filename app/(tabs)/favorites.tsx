@@ -1,7 +1,12 @@
 import { View, StyleSheet, FlatList } from 'react-native';
 import { Text } from 'react-native-paper';
 import { useLikedBooks } from '../../src/presentation/hooks/useLikes';
-import { LoadingSpinner, ErrorMessage, BookInfoCard } from '../../src/presentation/components';
+import { 
+  LoadingSpinner, 
+  ErrorMessage, 
+  BookInfoCard,
+  EmptyState 
+} from '../../src/presentation/components';
 import { spacing } from '../../src/presentation/theme/spacing';
 import { useRouter } from 'expo-router';
 
@@ -37,17 +42,11 @@ export default function FavoritesScreen() {
 
   if (!likedBooks || likedBooks.length === 0) {
     return (
-      <View style={styles.centerContainer}>
-        <Text variant="headlineMedium" style={styles.emptyIcon}>
-          💔
-        </Text>
-        <Text variant="titleLarge" style={styles.emptyTitle}>
-          Nessun preferito
-        </Text>
-        <Text variant="bodyMedium" style={styles.emptyText}>
-          Inizia a esplorare i libri e aggiungi i tuoi preferiti!
-        </Text>
-      </View>
+      <EmptyState
+        emoji="💔"
+        title="Nessun preferito"
+        description="Inizia a esplorare i libri e aggiungi i tuoi preferiti!"
+      />
     );
   }
 
@@ -87,20 +86,6 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     marginTop: spacing.md,
-  },
-  emptyIcon: {
-    fontSize: 64,
-    lineHeight: 80,
-    marginBottom: spacing.md,
-    textAlign: 'center',
-  },
-  emptyTitle: {
-    textAlign: 'center',
-    marginBottom: spacing.sm,
-  },
-  emptyText: {
-    textAlign: 'center',
-    opacity: 0.7,
   },
   bookCard: {
     marginBottom: spacing.md,

@@ -1,9 +1,15 @@
 import { View, StyleSheet, ScrollView, Image } from 'react-native';
-import { Text, Button, Chip, Divider } from 'react-native-paper';
+import { Text } from 'react-native-paper';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useBook } from '../../src/presentation/hooks/useBooks';
 import { useIsBookLiked, useToggleLike } from '../../src/presentation/hooks/useLikes';
-import { LoadingSpinner, ErrorMessage } from '../../src/presentation/components';
+import { 
+  LoadingSpinner, 
+  ErrorMessage, 
+  Button, 
+  Tag, 
+  Divider 
+} from '../../src/presentation/components';
 import { spacing } from '../../src/presentation/theme/spacing';
 import * as Linking from 'expo-linking';
 
@@ -61,9 +67,7 @@ export default function BookDetailScreen() {
         {book.genres && book.genres.length > 0 && (
           <View style={styles.genresContainer}>
             {book.genres.map((genre, index) => (
-              <Chip key={index} style={styles.genreChip} compact>
-                {genre}
-              </Chip>
+              <Tag key={index} label={genre} />
             ))}
           </View>
         )}

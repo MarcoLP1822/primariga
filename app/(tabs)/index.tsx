@@ -1,16 +1,23 @@
 import { View, StyleSheet, ScrollView, RefreshControl } from 'react-native';
-import { Text, Button as PaperButton, IconButton } from 'react-native-paper';
+import { Text, Button as PaperButton } from 'react-native-paper';
 import {
   useRandomBook,
   useIncrementBookView,
   useIncrementBookClick,
 } from '../../src/presentation/hooks/useBooks';
 import { useToggleLike, useIsBookLiked } from '../../src/presentation/hooks/useLikes';
-import { BookLineCard, LoadingSpinner, ErrorMessage } from '../../src/presentation/components';
+import { 
+  BookLineCard, 
+  LoadingSpinner, 
+  ErrorMessage, 
+  IconButton,
+  Snackbar 
+} from '../../src/presentation/components';
 import { spacing } from '../../src/presentation/theme/spacing';
 import { useRouter } from 'expo-router';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import * as Linking from 'expo-linking';
+import { useAppStore } from '../../src/infrastructure/store/store';
 
 /**
  * Home Screen - Feed principale con scoperta libri casuali
@@ -22,6 +29,9 @@ export default function HomeScreen() {
   const incrementClick = useIncrementBookClick();
   const toggleLike = useToggleLike();
   const { data: isLiked } = useIsBookLiked(book?.id);
+  const userId = useAppStore((state) => state.userId);
+  const [snackbarVisible, setSnackbarVisible] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
 
   // Incrementa view count quando il libro viene caricato
   useEffect(() => {
@@ -37,7 +47,26 @@ export default function HomeScreen() {
 
   const handleLike = () => {
     if (!book) return;
-    toggleLike.mutate({ bookId: book.id, isLiked: isLiked ?? false });
+    
+    if (!userId) {
+      setSnackbarMessage('Errore: utente non identificato');
+      setSnackbarVisible(true);
+      return;
+    }
+
+    toggleLike.mutate(
+      { bookId: book.id, isLiked: isLiked ?? false },
+      {
+        onSuccess: () => {
+          setSnackbarMessage(isLiked ? 'Rimosso dai preferiti' : 'Aggiunto ai preferiti!');
+          setSnackbarVisible(true);
+        },
+        onError: (error) => {
+          setSnackbarMessage(`Errore nel salvataggio: ${error.message}`);
+          setSnackbarVisible(true);
+        },
+      }
+    );
   };
 
   const handleBuyClick = async () => {
@@ -101,10 +130,10 @@ export default function HomeScreen() {
     >
       <View style={styles.header}>
         <Text variant="headlineMedium" style={styles.title}>
-          🎭 Scopri una nuova lettura
+          PrimaRiga
         </Text>
         <Text variant="bodyMedium" style={styles.subtitle}>
-          Leggi la prima frase e decidi se ti piace
+          La prima frase della tua prossima avventura!
         </Text>
       </View>
 
@@ -147,6 +176,17 @@ export default function HomeScreen() {
           Prossimo libro
         </Text>
       </View>
+
+      <Snackbar
+        visible={snackbarVisible}
+        message={snackbarMessage}
+        onDismiss={() => setSnackbarVisible(false)}
+        duration={3000}
+        action={{
+          label: 'OK',
+          onPress: () => setSnackbarVisible(false),
+        }}
+      />
     </ScrollView>
   );
 }

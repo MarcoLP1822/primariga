@@ -158,27 +158,21 @@ export interface Database {
           user_id: string
           book_id: string
           interaction_type: string
-          metadata: Json | null
           created_at: string
-          updated_at: string
         }
         Insert: {
           id?: string
           user_id: string
           book_id: string
           interaction_type: string
-          metadata?: Json | null
           created_at?: string
-          updated_at?: string
         }
         Update: {
           id?: string
           user_id?: string
           book_id?: string
           interaction_type?: string
-          metadata?: Json | null
           created_at?: string
-          updated_at?: string
         }
       }
     }
@@ -196,7 +190,7 @@ export interface Database {
       }
     }
     Enums: {
-      [_ in never]: never
+      interaction_type: 'like' | 'dislike' | 'skip' | 'purchase'
     }
   }
 }

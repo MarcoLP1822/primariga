@@ -1,7 +1,8 @@
 import React from 'react';
 import { StyleSheet, View, ViewStyle, Image } from 'react-native';
-import { Text, useTheme, Chip } from 'react-native-paper';
+import { Text, useTheme } from 'react-native-paper';
 import { Card } from './Card';
+import { Tag } from './Tag';
 import { spacing } from '../theme/spacing';
 import { Book } from '../../domain/entities';
 
@@ -53,9 +54,7 @@ export const BookInfoCard: React.FC<BookInfoCardProps> = ({ book, onPress, style
           {book.genres && book.genres.length > 0 && (
             <View style={styles.genresContainer}>
               {book.genres.slice(0, 2).map((genre, index) => (
-                <Chip key={index} style={styles.genreChip} compact>
-                  {genre}
-                </Chip>
+                <Tag key={index} label={genre} />
               ))}
             </View>
           )}
@@ -94,8 +93,5 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     gap: spacing.xs,
     marginTop: spacing.xs,
-  },
-  genreChip: {
-    height: 24,
   },
 });
