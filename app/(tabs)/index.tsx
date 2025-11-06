@@ -11,32 +11,53 @@ import {
   LoadingSpinner, 
   ErrorMessage, 
   IconButton,
-  Snackbar 
+  Snackbar,
+  AuthPrompt
 } from '../../src/presentation/components';
 import { spacing } from '../../src/presentation/theme/spacing';
-import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import * as Linking from 'expo-linking';
 import { useAppStore } from '../../src/infrastructure/store/store';
+import { useScreenTracking } from '../../src/presentation/hooks/useScreenTracking';
+import { analytics, AnalyticsEvent } from '../../src/infrastructure/analytics';
 
 /**
  * Home Screen - Feed principale con scoperta libri casuali
+ * 
+ * IMPORTANTE: Supporta utilizzo anonimo. 
+ * L'auth viene richiesta solo quando l'utente tenta di salvare un preferito.
  */
 export default function HomeScreen() {
-  const router = useRouter();
+  // Track screen view
+  useScreenTracking('Home');
+  
   const { data: book, isLoading, error, refetch } = useRandomBook();
   const incrementView = useIncrementBookView();
   const incrementClick = useIncrementBookClick();
   const toggleLike = useToggleLike();
   const { data: isLiked } = useIsBookLiked(book?.id);
-  const userId = useAppStore((state) => state.userId);
+  const requiresAuth = useAppStore((state) => state.requiresAuth);
   const [snackbarVisible, setSnackbarVisible] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [showAuthPrompt, setShowAuthPrompt] = useState(false);
+  const [showPurchaseLinks, setShowPurchaseLinks] = useState(false);
 
   // Incrementa view count quando il libro viene caricato
   useEffect(() => {
     if (book?.id) {
       incrementView.mutate(book.id);
+      
+      // Track book card viewed
+      analytics.track(AnalyticsEvent.BOOK_CARD_VIEWED, {
+        book_id: book.id,
+        book_title: book.title,
+        book_author: book.author,
+        book_genres: book.genres,
+        screen: 'Home',
+      });
+      
+      // Reset purchase links quando cambia libro
+      setShowPurchaseLinks(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [book?.id]);
@@ -48,16 +69,28 @@ export default function HomeScreen() {
   const handleLike = () => {
     if (!book) return;
     
-    if (!userId) {
-      setSnackbarMessage('Errore: utente non identificato');
-      setSnackbarVisible(true);
+    // Se utente anonimo, mostra AuthPrompt
+    if (requiresAuth()) {
+      setShowAuthPrompt(true);
       return;
     }
 
+    // Utente autenticato - procedi con like
     toggleLike.mutate(
       { bookId: book.id, isLiked: isLiked ?? false },
       {
         onSuccess: () => {
+          // Track like/unlike event
+          analytics.track(
+            isLiked ? AnalyticsEvent.BOOK_UNLIKED : AnalyticsEvent.BOOK_LIKED,
+            {
+              book_id: book.id,
+              book_title: book.title,
+              book_author: book.author,
+              screen: 'Home',
+            }
+          );
+          
           setSnackbarMessage(isLiked ? 'Rimosso dai preferiti' : 'Aggiunto ai preferiti!');
           setSnackbarVisible(true);
         },
@@ -72,19 +105,39 @@ export default function HomeScreen() {
   const handleBuyClick = async () => {
     if (!book) return;
 
-    // Incrementa click count
-    incrementClick.mutate(book.id);
-
-    // Apri link di acquisto (priorità: Amazon > IBS > Mondadori)
-    const buyLink = book.amazonLink || book.ibsLink || book.mondadoriLink;
-    if (buyLink) {
-      await Linking.openURL(buyLink);
+    // Toggle visibility dei link
+    if (!showPurchaseLinks) {
+      setShowPurchaseLinks(true);
+      
+      // Track purchase button click
+      analytics.track(AnalyticsEvent.PURCHASE_LINK_CLICKED, {
+        book_id: book.id,
+        book_title: book.title,
+        book_author: book.author,
+        screen: 'Home',
+        action: 'reveal_links',
+      });
+    } else {
+      setShowPurchaseLinks(false);
     }
   };
 
-  const handleShowDetails = () => {
+  const handlePurchaseLinkClick = async (url: string, storeName: string) => {
     if (!book) return;
-    router.push(`/book/${book.id}`);
+
+    // Incrementa click count
+    incrementClick.mutate(book.id);
+    
+    // Track purchase link click
+    analytics.track(AnalyticsEvent.PURCHASE_LINK_CLICKED, {
+      book_id: book.id,
+      book_title: book.title,
+      book_author: book.author,
+      screen: 'Home',
+      store: storeName,
+    });
+
+    await Linking.openURL(url);
   };
 
   if (isLoading) {
@@ -152,23 +205,63 @@ export default function HomeScreen() {
         </PaperButton>
 
         <PaperButton
-          mode="outlined"
-          onPress={handleShowDetails}
-          style={styles.actionButton}
-          icon="information"
-        >
-          Dettagli
-        </PaperButton>
-
-        <PaperButton
           mode="contained"
           onPress={handleBuyClick}
           style={[styles.actionButton, styles.buyButton]}
-          icon="cart"
+          icon={showPurchaseLinks ? 'chevron-up' : 'cart'}
         >
-          Acquista
+          {showPurchaseLinks ? 'Chiudi' : 'Acquista'}
         </PaperButton>
       </View>
+
+      {showPurchaseLinks && book && (
+        <View style={styles.purchaseLinksContainer}>
+          <Text variant="titleSmall" style={styles.purchaseTitle}>
+            🛒 Acquista su:
+          </Text>
+          
+          <View style={styles.purchaseButtons}>
+            {book.amazonLink && (
+              <PaperButton
+                mode="contained"
+                onPress={() => handlePurchaseLinkClick(book.amazonLink || '', 'Amazon')}
+                style={styles.storeButton}
+                icon="cart"
+              >
+                Amazon
+              </PaperButton>
+            )}
+
+            {book.ibsLink && (
+              <PaperButton
+                mode="contained"
+                onPress={() => handlePurchaseLinkClick(book.ibsLink || '', 'IBS')}
+                style={styles.storeButton}
+                icon="cart"
+              >
+                IBS
+              </PaperButton>
+            )}
+
+            {book.mondadoriLink && (
+              <PaperButton
+                mode="contained"
+                onPress={() => handlePurchaseLinkClick(book.mondadoriLink || '', 'Mondadori')}
+                style={styles.storeButton}
+                icon="cart"
+              >
+                Mondadori
+              </PaperButton>
+            )}
+
+            {!book.amazonLink && !book.ibsLink && !book.mondadoriLink && (
+              <Text variant="bodyMedium" style={styles.noLinksText}>
+                Link di acquisto non disponibili
+              </Text>
+            )}
+          </View>
+        </View>
+      )}
 
       <View style={styles.nextContainer}>
         <IconButton icon="refresh" size={32} mode="contained" onPress={handleNext} />
@@ -186,6 +279,13 @@ export default function HomeScreen() {
           label: 'OK',
           onPress: () => setSnackbarVisible(false),
         }}
+      />
+
+      <AuthPrompt
+        visible={showAuthPrompt}
+        onDismiss={() => setShowAuthPrompt(false)}
+        action="salvare questo libro tra i preferiti"
+        title="Accedi per salvare i tuoi preferiti"
       />
     </ScrollView>
   );
@@ -237,6 +337,27 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   buyButton: {},
+  purchaseLinksContainer: {
+    marginBottom: spacing.lg,
+    padding: spacing.md,
+    backgroundColor: '#f5f5f5',
+    borderRadius: 12,
+  },
+  purchaseTitle: {
+    marginBottom: spacing.md,
+    fontWeight: 'bold',
+  },
+  purchaseButtons: {
+    gap: spacing.sm,
+  },
+  storeButton: {
+    width: '100%',
+  },
+  noLinksText: {
+    textAlign: 'center',
+    opacity: 0.5,
+    marginTop: spacing.sm,
+  },
   nextContainer: {
     alignItems: 'center',
     marginTop: spacing.md,

@@ -8,9 +8,13 @@ import { lightTheme } from './src/presentation/theme';
 import { Card, LoadingSpinner, ErrorMessage } from './src/presentation/components';
 import { spacing } from './src/presentation/theme/spacing';
 import { initSentry } from './src/infrastructure/monitoring/sentry';
+import { initPostHog } from './src/infrastructure/analytics';
 
 // Inizializza Sentry all'avvio
 initSentry();
+
+// Inizializza PostHog all'avvio
+initPostHog();
 
 export default function App() {
   const [connected, setConnected] = useState<boolean | null>(null);

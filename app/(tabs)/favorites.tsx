@@ -9,15 +9,26 @@ import {
 } from '../../src/presentation/components';
 import { spacing } from '../../src/presentation/theme/spacing';
 import { useRouter } from 'expo-router';
+import { useScreenTracking } from '../../src/presentation/hooks/useScreenTracking';
+import { analytics, AnalyticsEvent } from '../../src/infrastructure/analytics';
 
 /**
  * Favorites Screen - Mostra i libri piaciuti dall'utente
  */
 export default function FavoritesScreen() {
+  // Track screen view
+  useScreenTracking('Favorites');
+  
   const router = useRouter();
   const { data: likedBooks, isLoading, error, refetch } = useLikedBooks();
 
   const handleBookPress = (bookId: string) => {
+    // Track book detail opened from favorites
+    analytics.track(AnalyticsEvent.BOOK_DETAIL_OPENED, {
+      book_id: bookId,
+      source: 'Favorites',
+    });
+    
     router.push(`/book/${bookId}`);
   };
 

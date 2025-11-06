@@ -1,20 +1,31 @@
 import { View, StyleSheet, ScrollView, Image } from 'react-native';
 import { Text } from 'react-native-paper';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { useBook } from '../../src/presentation/hooks/useBooks';
+import { useBook, useIncrementBookClick } from '../../src/presentation/hooks/useBooks';
 import { useIsBookLiked, useToggleLike } from '../../src/presentation/hooks/useLikes';
 import { 
   LoadingSpinner, 
   ErrorMessage, 
   Button, 
   Tag, 
-  Divider 
+  Divider,
+  AuthPrompt
 } from '../../src/presentation/components';
 import { spacing } from '../../src/presentation/theme/spacing';
 import * as Linking from 'expo-linking';
+import { useState, useEffect } from 'react';
+import { useAppStore } from '../../src/infrastructure/store/store';
+import { useScreenTracking } from '../../src/presentation/hooks/useScreenTracking';
+import { analytics, AnalyticsEvent } from '../../src/infrastructure/analytics';
 
 /**
- * Book Detail Screen - Dettagli completi di un libro
+ * Book Detail Screen - Esperienza "acquisto alla cieca"
+ * 
+ * Mostra solo le informazioni essenziali (copertina, titolo, autore, generi).
+ * I link di acquisto vengono rivelati solo quando l'utente clicca su "Acquista".
+ * 
+ * IMPORTANTE: Supporta utilizzo anonimo.
+ * L'auth viene richiesta solo quando l'utente tenta di salvare un preferito.
  */
 export default function BookDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -22,15 +33,87 @@ export default function BookDetailScreen() {
   const { data: book, isLoading, error } = useBook(id);
   const { data: isLiked } = useIsBookLiked(id);
   const toggleLike = useToggleLike();
+  const incrementClick = useIncrementBookClick();
+  const requiresAuth = useAppStore((state) => state.requiresAuth);
+  const [showAuthPrompt, setShowAuthPrompt] = useState(false);
+  const [showPurchaseLinks, setShowPurchaseLinks] = useState(false);
+  
+  // Track screen view with book context
+  useScreenTracking('Book Detail', {
+    book_id: id,
+    book_title: book?.title,
+    book_author: book?.author,
+  });
+  
+  // Track book viewed when loaded
+  useEffect(() => {
+    if (book) {
+      analytics.track(AnalyticsEvent.BOOK_DETAIL_OPENED, {
+        book_id: book.id,
+        book_title: book.title,
+        book_author: book.author,
+        book_genres: book.genres,
+      });
+    }
+  }, [book]);
 
   const handleToggleLike = () => {
     if (!book) return;
-    toggleLike.mutate({ bookId: book.id, isLiked: isLiked ?? false });
+    
+    // Se utente anonimo, mostra AuthPrompt
+    if (requiresAuth()) {
+      setShowAuthPrompt(true);
+      return;
+    }
+    
+    // Utente autenticato - procedi con like
+    toggleLike.mutate(
+      { bookId: book.id, isLiked: isLiked ?? false },
+      {
+        onSuccess: () => {
+          // Track like/unlike event
+          analytics.track(
+            isLiked ? AnalyticsEvent.BOOK_UNLIKED : AnalyticsEvent.BOOK_LIKED,
+            {
+              book_id: book.id,
+              book_title: book.title,
+              book_author: book.author,
+              screen: 'Book Detail',
+            }
+          );
+        },
+      }
+    );
   };
 
   const handleBuyClick = async (url?: string) => {
-    if (!url) return;
+    if (!url || !book) return;
+    
+    // Track purchase link click
+    incrementClick.mutate(book.id);
+    analytics.track(AnalyticsEvent.PURCHASE_LINK_CLICKED, {
+      book_id: book.id,
+      book_title: book.title,
+      book_author: book.author,
+      screen: 'Book Detail',
+    });
+    
     await Linking.openURL(url);
+  };
+
+  const handleShowPurchaseLinks = () => {
+    if (!book) return;
+    
+    setShowPurchaseLinks(true);
+    
+    // Track purchase button click
+    analytics.track(AnalyticsEvent.PURCHASE_LINK_CLICKED, {
+      book_id: book.id,
+      book_title: book.title,
+      book_author: book.author,
+      screen: 'Book Detail',
+      action: 'reveal_links',
+    });
   };
 
   if (isLoading) {
@@ -74,113 +157,84 @@ export default function BookDetailScreen() {
 
         <Divider style={styles.divider} />
 
-        {book.description && (
-          <>
-            <Text variant="titleSmall" style={styles.sectionTitle}>
-              📖 Descrizione
-            </Text>
-            <Text variant="bodyMedium" style={styles.description}>
-              {book.description}
-            </Text>
-            <Divider style={styles.divider} />
-          </>
-        )}
-
-        <View style={styles.infoGrid}>
-          {book.publisher && (
-            <View style={styles.infoRow}>
-              <Text variant="labelLarge">Editore:</Text>
-              <Text variant="bodyMedium">{book.publisher}</Text>
-            </View>
-          )}
-
-          {book.publicationYear && (
-            <View style={styles.infoRow}>
-              <Text variant="labelLarge">Anno:</Text>
-              <Text variant="bodyMedium">{book.publicationYear}</Text>
-            </View>
-          )}
-
-          {book.pageCount && (
-            <View style={styles.infoRow}>
-              <Text variant="labelLarge">Pagine:</Text>
-              <Text variant="bodyMedium">{book.pageCount}</Text>
-            </View>
-          )}
-
-          {book.language && (
-            <View style={styles.infoRow}>
-              <Text variant="labelLarge">Lingua:</Text>
-              <Text variant="bodyMedium">{book.language.toUpperCase()}</Text>
-            </View>
-          )}
-
-          {book.isbn && (
-            <View style={styles.infoRow}>
-              <Text variant="labelLarge">ISBN:</Text>
-              <Text variant="bodyMedium">{book.isbn}</Text>
-            </View>
-          )}
-        </View>
-
-        <Divider style={styles.divider} />
-
         <View style={styles.actionsContainer}>
           <Button
             mode={isLiked ? 'contained' : 'outlined'}
             onPress={handleToggleLike}
-            style={styles.likeButton}
+            style={styles.actionButton}
             icon={isLiked ? 'heart' : 'heart-outline'}
           >
             {isLiked ? 'Piaciuto' : 'Mi piace'}
           </Button>
+
+          {!showPurchaseLinks && (
+            <Button
+              mode="contained"
+              onPress={handleShowPurchaseLinks}
+              style={styles.actionButton}
+              icon="cart"
+            >
+              Acquista
+            </Button>
+          )}
         </View>
 
-        <Text variant="titleSmall" style={styles.buyTitle}>
-          🛒 Acquista su:
-        </Text>
-
-        <View style={styles.buyLinksContainer}>
-          {book.amazonLink && (
-            <Button
-              mode="contained"
-              onPress={() => handleBuyClick(book.amazonLink)}
-              style={styles.buyButton}
-              icon="cart"
-            >
-              Amazon
-            </Button>
-          )}
-
-          {book.ibsLink && (
-            <Button
-              mode="contained"
-              onPress={() => handleBuyClick(book.ibsLink)}
-              style={styles.buyButton}
-              icon="cart"
-            >
-              IBS
-            </Button>
-          )}
-
-          {book.mondadoriLink && (
-            <Button
-              mode="contained"
-              onPress={() => handleBuyClick(book.mondadoriLink)}
-              style={styles.buyButton}
-              icon="cart"
-            >
-              Mondadori
-            </Button>
-          )}
-
-          {!book.amazonLink && !book.ibsLink && !book.mondadoriLink && (
-            <Text variant="bodyMedium" style={styles.noBuyLinks}>
-              Link di acquisto non disponibili
+        {showPurchaseLinks && (
+          <>
+            <Text variant="titleSmall" style={styles.buyTitle}>
+              🛒 Acquista su:
             </Text>
-          )}
-        </View>
+
+            <View style={styles.buyLinksContainer}>
+              {book.amazonLink && (
+                <Button
+                  mode="contained"
+                  onPress={() => handleBuyClick(book.amazonLink)}
+                  style={styles.buyButton}
+                  icon="cart"
+                >
+                  Amazon
+                </Button>
+              )}
+
+              {book.ibsLink && (
+                <Button
+                  mode="contained"
+                  onPress={() => handleBuyClick(book.ibsLink)}
+                  style={styles.buyButton}
+                  icon="cart"
+                >
+                  IBS
+                </Button>
+              )}
+
+              {book.mondadoriLink && (
+                <Button
+                  mode="contained"
+                  onPress={() => handleBuyClick(book.mondadoriLink)}
+                  style={styles.buyButton}
+                  icon="cart"
+                >
+                  Mondadori
+                </Button>
+              )}
+
+              {!book.amazonLink && !book.ibsLink && !book.mondadoriLink && (
+                <Text variant="bodyMedium" style={styles.noBuyLinks}>
+                  Link di acquisto non disponibili
+                </Text>
+              )}
+            </View>
+          </>
+        )}
       </View>
+      
+      <AuthPrompt
+        visible={showAuthPrompt}
+        onDismiss={() => setShowAuthPrompt(false)}
+        action="salvare questo libro tra i preferiti"
+        title="Accedi per salvare i tuoi preferiti"
+      />
     </ScrollView>
   );
 }
@@ -214,33 +268,14 @@ const styles = StyleSheet.create({
     gap: spacing.xs,
     marginBottom: spacing.md,
   },
-  genreChip: {
-    marginRight: spacing.xs,
-    marginBottom: spacing.xs,
-  },
   divider: {
     marginVertical: spacing.md,
   },
-  sectionTitle: {
-    marginBottom: spacing.sm,
-    fontWeight: 'bold',
-  },
-  description: {
-    lineHeight: 22,
-    marginBottom: spacing.md,
-  },
-  infoGrid: {
-    gap: spacing.sm,
-  },
-  infoRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingVertical: spacing.xs,
-  },
   actionsContainer: {
+    gap: spacing.sm,
     marginBottom: spacing.lg,
   },
-  likeButton: {
+  actionButton: {
     width: '100%',
   },
   buyTitle: {

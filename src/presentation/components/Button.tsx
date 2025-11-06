@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, ViewStyle } from 'react-native';
-import { Button as PaperButton, useTheme } from 'react-native-paper';
+import { Button as PaperButton } from 'react-native-paper';
 import { spacing } from '../theme/spacing';
 
 export interface ButtonProps {
@@ -28,8 +28,6 @@ export const Button: React.FC<ButtonProps> = ({
   fullWidth,
   style,
 }) => {
-  const theme = useTheme();
-
   return (
     <PaperButton
       mode={mode}

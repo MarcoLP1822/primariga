@@ -7,11 +7,16 @@ L'applicazione MVP è ora completamente configurata con:
 - ✅ Expo Router con navigazione a tab
 - ✅ React Query per data fetching
 - ✅ Zustand per state management
-- ✅ Supabase configurato
+- ✅ Supabase configurato con Auth
+- ✅ Optional Auth pattern (app utilizzabile senza account)
 - ✅ 3 screen principali: Home, Favorites, Profile
 - ✅ Screen dettaglio libro con modal
 - ✅ Sistema di like/unlike
 - ✅ Componenti UI completi
+- ✅ Testing infrastructure (74 tests)
+- ✅ CI/CD pipeline completa
+- ✅ Sentry error tracking
+- ✅ PostHog analytics tracking
 
 ## 🎯 Come Avviare l'App
 
@@ -95,15 +100,22 @@ INSERT INTO book_lines (book_id, line_text, line_number)
 SELECT id, 'Naturalmente un manoscritto.', 1 FROM books WHERE title = 'Il nome della rosa';
 ```
 
-### Autenticazione Temporanea
+### Autenticazione
 
-Attualmente l'app usa un sistema di autenticazione temporaneo (ID generato client-side).
+L'app implementa **Optional Auth pattern**:
+- ✅ Completamente utilizzabile senza account
+- ✅ Autenticazione richiesta solo per salvare preferiti
+- ✅ Supabase Auth con email/password e OAuth (Google, Apple)
 
-Per produzione, implementare:
+**Guide rapide**:
+- [QUICKSTART_AUTH.md](./QUICKSTART_AUTH.md) - Setup auth completo
+- [QUICKSTART_OPTIONAL_AUTH.md](./QUICKSTART_OPTIONAL_AUTH.md) - Pattern reference
 
-- Supabase Auth con OAuth providers
-- Email/Password authentication
-- User profiles persistenti
+**Flusso utente**:
+1. User apre app → accesso immediato
+2. User esplora libri → nessun login richiesto
+3. User tenta like → soft prompt per signup
+4. User può continuare senza account o registrarsi
 
 ## 🐛 Troubleshooting
 
@@ -148,33 +160,46 @@ Modifica `app/(tabs)/_layout.tsx`
 
 ## 📦 Prossimi Step Consigliati
 
-### Priority 1 - Dati Reali
+### Priority 1 - Database Population
 
-- [ ] Popolare database con catalogo libri reali
-- [ ] Implementare scraping/API per ottenere prime righe
+- [ ] Espandere database con 100+ libri reali
+- [ ] Implementare script di scraping/API per prime righe
+- [ ] Vedere: `scripts/seed-database.ts`
 
-### Priority 2 - Autenticazione
+### Priority 2 - Device Testing
 
-- [ ] Implementare Supabase Auth
-- [ ] User profiles persistenti
-- [ ] Social login (Google, Apple)
+- [ ] Build per dispositivi reali (iOS + Android)
+- [ ] Test su diversi device e OS versions
+- [ ] Raccogliere feedback da beta tester
+- [ ] Vedere: [QUICKSTART_TESTING.md](./QUICKSTART_TESTING.md)
 
-### Priority 3 - Features
+### Priority 3 - Features Enhancement
 
 - [ ] Filtri per genere/lingua
 - [ ] Ricerca libri
 - [ ] Condivisione social
-- [ ] Notifiche push
+- [ ] Notifiche push (opzionale)
 
-### Priority 4 - Production Ready
+### Priority 4 - Production Release
 
-- [ ] Error tracking (Sentry)
-- [ ] Analytics (PostHog/Mixpanel)
-- [ ] Testing (Jest + Detox)
-- [ ] CI/CD pipeline
-- [ ] App Store deployment
+- [x] Analytics tracking (PostHog implemented)
+- [ ] Increase test coverage (target: 80%+)
+- [ ] Privacy policy + Terms of Service
+- [ ] App Store + Play Store submission
+
+## 📊 Analytics
+
+PostHog è configurato per tracciare:
+- User behavior (screen views, book interactions, purchases)
+- Conversion funnels (signup, purchase)
+- Retention metrics (DAU, WAU, MAU)
+- Custom events e user properties
+
+**Setup**: Vedi [docs/POSTHOG_SETUP.md](./docs/POSTHOG_SETUP.md) per configurazione completa.
 
 ## 📚 Documentazione
+
+## � Analytics
 
 - [Expo Router](https://docs.expo.dev/router/introduction/)
 - [React Query](https://tanstack.com/query/latest)

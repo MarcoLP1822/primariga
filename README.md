@@ -32,6 +32,7 @@ Un'applicazione **multi-piattaforma** (iOS, Android, Web) che ti fa scoprire lib
 
 - ✅ **Feed Infinito** - Scoperta continua di nuove prime righe
 - ✅ **Sistema di Like** - Salva i libri che ti intrigano
+- ✅ **Autenticazione Opzionale** - App utilizzabile senza account, auth richiesta solo per preferiti
 - ✅ **Link di Acquisto** - Amazon, IBS, Mondadori integrati
 - ✅ **Profilo Utente** - Statistiche personali e preferiti
 - ✅ **Multi-Language** - Italiano, Inglese (più lingue in arrivo)
@@ -213,6 +214,7 @@ primariga/
 | **Testing**         | Jest 29+ + RNTL 12+    | Unit + Integration tests         |
 | **Validation**      | Zod 3.24+              | Runtime type checking            |
 | **Error Tracking**  | Sentry 7.5+            | Crash reporting + monitoring     |
+| **Analytics**       | PostHog 4.10+          | Product analytics + user tracking|
 | **Linting**         | ESLint + Prettier      | Code quality + formatting        |
 | **CI/CD**           | GitHub Actions         | Automated testing + deployment   |
 
@@ -222,8 +224,11 @@ primariga/
 
 | Document | Description |
 | -------- | ----------- |
-| [**Implementation Plan**](./docs/implementation-plan.md) | Complete roadmap (8 tasks, 606 lines) |
-| [**Implementation Complete**](./docs/IMPLEMENTATION_COMPLETE.md) | Final status report (95% production-ready) |
+| [**Quick Start**](./QUICKSTART.md) | Setup and first run guide |
+| [**Quick Start - Auth**](./QUICKSTART_AUTH.md) | Supabase Auth setup guide |
+| [**Quick Start - Optional Auth**](./QUICKSTART_OPTIONAL_AUTH.md) | Optional auth pattern reference |
+| [**Quick Start - iOS Testing**](./QUICKSTART_IOS_TESTING.md) | iPhone/iPad testing guide |
+| [**Quick Start - Testing**](./QUICKSTART_TESTING.md) | Device testing quick reference |
 | [**Testing Guide**](./docs/TESTING.md) | Testing strategy + examples (500+ lines) |
 | [**Error Handling**](./docs/ERROR_HANDLING.md) | Result pattern + AppError types (300+ lines) |
 | [**Validation**](./docs/VALIDATION.md) | Zod schemas + usage (200+ lines) |
@@ -231,7 +236,13 @@ primariga/
 | [**Security**](./docs/SECURITY.md) | Security hardening guide (600+ lines) |
 | [**CI/CD**](./docs/CI_CD.md) | GitHub Actions workflows (280+ lines) |
 | [**Sentry**](./docs/SENTRY.md) | Monitoring setup (420+ lines) |
-| [**Quick Start**](./QUICKSTART.md) | Setup and first run guide |
+| [**Analytics**](./docs/ANALYTICS.md) | Analytics strategy & implementation (500+ lines) |
+| [**PostHog Setup**](./docs/POSTHOG_SETUP.md) | PostHog configuration guide (400+ lines) |
+| [**Supabase Auth**](./docs/SUPABASE_AUTH_IMPLEMENTATION.md) | Complete auth implementation guide |
+| [**Optional Auth**](./docs/OPTIONAL_AUTH_IMPLEMENTATION.md) | Optional authentication pattern |
+| [**Device Testing**](./docs/DEVICE_TESTING.md) | Complete device testing guide |
+| [**Testing Checklists**](./docs/TESTING_CHECKLIST.md) | Testing checklists (iOS & general) |
+| [**Supabase Types**](./docs/SUPABASE_TYPES.md) | Database type generation guide |
 
 ---
 
@@ -485,24 +496,28 @@ We welcome contributions! Please follow these steps:
 
 ## 🎯 Roadmap
 
-### Phase 1: MVP (✅ Complete)
+### Phase 1: MVP (✅ Complete - Nov 2025)
 
 - [x] Core book discovery feed
 - [x] Like/unlike system
+- [x] User authentication (Supabase Auth)
+- [x] Optional auth pattern (app usable without login)
 - [x] User profiles
-- [x] Multi-platform support
-- [x] Testing infrastructure
-- [x] CI/CD pipeline
-- [x] Production-ready security
+- [x] Multi-platform support (iOS, Android, Web)
+- [x] Testing infrastructure (74 tests passing)
+- [x] CI/CD pipeline (GitHub Actions)
+- [x] Production-ready security (RLS, sanitization)
+- [x] Error tracking (Sentry)
+- [x] Analytics infrastructure
 
-### Phase 2: Enhancement (📋 Planned)
+### Phase 2: Enhancement (📋 In Progress)
 
-- [ ] User authentication (signup/login)
+- [ ] Database population (100+ books)
+- [ ] Real device testing (iOS & Android)
 - [ ] Personalized recommendations
-- [ ] Reading history tracking
 - [ ] Social features (share, comments)
-- [ ] Multiple book sources
 - [ ] Advanced search + filters
+- [ ] Reading history tracking
 
 ### Phase 3: Scale (🚀 Future)
 

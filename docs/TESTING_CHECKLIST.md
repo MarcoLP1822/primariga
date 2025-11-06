@@ -8,13 +8,18 @@
 
 **Happy Path - Flusso Principale**:
 
-- [ ] Avvia app → Feed carica in < 3 sec
+- [ ] Avvia app → Feed carica in < 3 sec (modalità anonima)
 - [ ] Scorri 5 prime righe → Scroll fluido 60fps
-- [ ] Tap ❤️ su 1 libro → Like salvato
+- [ ] Tap ❤️ su 1 libro → AuthPrompt appare (richiede signup)
+- [ ] Tap "Crea Account" → Screen signup si apre
+- [ ] Completa signup → Verifica email → Login
+- [ ] Tap ❤️ su libro → Like salvato (ora autenticato)
 - [ ] Tap su card libro → Dettaglio si apre
 - [ ] Tap su link Amazon → Browser si apre
 - [ ] Back → Torna al feed
 - [ ] Vai a tab Favorites → Libro piaciuto c'è
+- [ ] Vai a tab Profilo → Tap "Esci"
+- [ ] Vai a tab Favorites → Lista vuota (logout funziona)
 - [ ] Pull to refresh → Lista aggiorna
 
 **Risultato atteso**: ✅ Tutto funziona senza crash/lag
@@ -76,15 +81,28 @@
 
 **Favorites**:
 
-- [ ] Mostra tutti i libri piaciuti
+- [ ] **Anonimo**: Empty state con invito a registrarsi
+- [ ] **Autenticato**: Mostra tutti i libri piaciuti
 - [ ] Tap apre dettaglio
 - [ ] Unlike rimuove da lista
-- [ ] Empty state se nessun favorite
+- [ ] Dopo logout → Lista si svuota
+- [ ] Dopo re-login → Likes riappaiono
 
 **Profile**:
 
-- [ ] User info mostra correttamente
-- [ ] Stats accurate (se presenti)
+- [ ] **Anonimo**: View con invito + button "Crea Account"
+- [ ] **Autenticato**: User info + stats + logout button
+- [ ] Stats accurate (libri esplorati, preferiti)
+- [ ] Logout funziona → Torna a view anonimo
+
+**Auth Flow**:
+
+- [ ] AuthPrompt appare quando anonimo tenta like
+- [ ] Dismiss prompt → Rimane anonimo
+- [ ] Signup completo → Session salvata
+- [ ] Verifica email ricevuta
+- [ ] Login dopo logout → Session ripristinata
+- [ ] Forgot password → Email reset ricevuta
 
 **Notes**: ____________________________________________
 

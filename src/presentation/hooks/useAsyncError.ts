@@ -20,7 +20,7 @@ interface AsyncState<T> {
  *   });
  * };
  */
-export function useAsyncError<T = any>() {
+export function useAsyncError<T = unknown>() {
   const [state, setState] = useState<AsyncState<T>>({
     data: null,
     error: null,
@@ -66,7 +66,7 @@ export function useAsyncError<T = any>() {
 /**
  * Hook semplificato per singola chiamata async
  */
-export function useAsync<T>(asyncFn: () => Promise<T>, dependencies: any[] = []) {
+export function useAsync<T>(asyncFn: () => Promise<T>) {
   const { execute, ...state } = useAsyncError<T>();
 
   useState(() => {

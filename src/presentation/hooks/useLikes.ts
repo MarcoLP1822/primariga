@@ -9,6 +9,9 @@ const bookRepository = new SupabaseBookRepository();
 
 /**
  * Hook per ottenere i libri piaciuti dall'utente
+ * 
+ * IMPORTANT: gcTime impostato a 0 per evitare che likes di utenti precedenti
+ * persistano in cache dopo logout/riavvio app
  */
 export function useLikedBooks() {
   const userId = useAppStore((state) => state.userId);
@@ -22,11 +25,15 @@ export function useLikedBooks() {
       return await bookRepository.getBooksByIds(bookIds);
     },
     enabled: !!userId,
+    // Don't persist this query - always fetch fresh when user logs in
+    gcTime: 0,
   });
 }
 
 /**
  * Hook per verificare se un libro è piaciuto
+ * 
+ * IMPORTANT: gcTime impostato a 0 per evitare problemi di cache cross-user
  */
 export function useIsBookLiked(bookId: string | undefined) {
   const userId = useAppStore((state) => state.userId);
@@ -39,11 +46,32 @@ export function useIsBookLiked(bookId: string | undefined) {
       return interaction?.interactionType === 'like';
     },
     enabled: !!userId && !!bookId,
+    // Don't persist this query
+    gcTime: 0,
   });
 }
 
 /**
  * Hook per aggiungere/rimuovere like ad un libro
+ * 
+ * IMPORTANTE: Per utenti anonimi, la mutazione NON viene eseguita.
+ * Il component chiamante deve controllare `requiresAuth()` prima di chiamare `mutate`
+ * e mostrare l'AuthPrompt se necessario.
+ * 
+ * @example
+ * ```tsx
+ * const toggleLike = useToggleLike();
+ * const requiresAuth = useAppStore((state) => state.requiresAuth);
+ * const [showAuthPrompt, setShowAuthPrompt] = useState(false);
+ * 
+ * const handleToggle = () => {
+ *   if (requiresAuth()) {
+ *     setShowAuthPrompt(true);
+ *     return;
+ *   }
+ *   toggleLike.mutate({ bookId, isLiked });
+ * };
+ * ```
  */
 export function useToggleLike() {
   const queryClient = useQueryClient();
@@ -51,7 +79,9 @@ export function useToggleLike() {
 
   return useMutation({
     mutationFn: async ({ bookId, isLiked }: { bookId: string; isLiked: boolean }) => {
-      if (!userId) throw new Error('User not authenticated');
+      if (!userId) {
+        throw new Error('User not authenticated. This should not happen - check requiresAuth() before calling mutate.');
+      }
 
       if (isLiked) {
         // Se già piaciuto, rimuovi l'interazione
