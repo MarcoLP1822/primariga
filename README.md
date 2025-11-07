@@ -37,6 +37,21 @@ Un'applicazione **multi-piattaforma** (iOS, Android, Web) che ti fa scoprire lib
 - ✅ **Profilo Utente** - Statistiche personali e preferiti
 - ✅ **Multi-Language** - Italiano, Inglese (più lingue in arrivo)
 
+### Security & Analytics Features (**Enterprise-Grade**)
+
+- ✅ **Strong Password Policy** - Min 8 chars, maiuscole/minuscole/numeri/simboli richiesti
+- ✅ **Password Strength Meter** - Feedback visuale real-time durante registrazione
+- ✅ **Rate Limiting** - Protezione brute-force (5 tentativi, lockout 5 minuti)
+- ✅ **Error Sanitization** - Prevenzione user enumeration e info disclosure
+- ✅ **Session Timeout** - Auto-logout dopo 30 minuti inattività
+- ✅ **Password Manager Support** - AutoComplete integrato (1Password, LastPass, etc.)
+- ✅ **Forgot Password Flow** - Reset via email sicuro
+- ✅ **PostHog Analytics** - Product analytics completi (20+ eventi tracciati)
+- ✅ **Sentry Error Tracking** - Monitoring errori e performance in produzione
+
+👉 Vedi [docs/SUPABASE_AUTH_IMPLEMENTATION.md](./docs/SUPABASE_AUTH_IMPLEMENTATION.md) per dettagli auth  
+👉 Vedi [docs/POSTHOG_IMPLEMENTATION_SUMMARY.md](./docs/POSTHOG_IMPLEMENTATION_SUMMARY.md) per analytics
+
 ### Technical Features
 
 - ✅ **Multi-Platform** - iOS, Android, Web con codebase unico (95%+)
@@ -82,7 +97,12 @@ cp .env.example .env
    - Run migrations: `supabase/migrations/20251105000000_initial_schema.sql`
    - Copy URL and Anon Key to `.env`
 
-2. **Sentry Setup** (optional):
+2. **PostHog Setup** (optional but recommended):
+   - Create project on [posthog.com](https://posthog.com)
+   - Copy API Key to `.env` as `EXPO_PUBLIC_POSTHOG_API_KEY`
+   - See [docs/POSTHOG_SETUP.md](./docs/POSTHOG_SETUP.md)
+
+3. **Sentry Setup** (optional):
    - Create project on [sentry.io](https://sentry.io)
    - Copy DSN to `.env` as `EXPO_PUBLIC_SENTRY_DSN`
 
@@ -147,6 +167,8 @@ primariga/
 │   │   ├── repositories/  # Supabase implementations
 │   │   └── supabase/      # Supabase client + types
 │   ├── infrastructure/    # Cross-cutting concerns
+│   │   ├── analytics/     # PostHog integration
+│   │   ├── auth/          # Supabase Auth + AdminGuard
 │   │   ├── config/        # React Query config
 │   │   ├── monitoring/    # Sentry integration
 │   │   ├── security/      # Security utilities
@@ -555,6 +577,7 @@ This project is licensed under the **MIT License** - see the [LICENSE](./LICENSE
 - [Expo](https://expo.dev) - For amazing cross-platform framework
 - [Supabase](https://supabase.com) - For powerful BaaS platform
 - [React Query](https://tanstack.com/query) - For incredible data fetching library
+- [PostHog](https://posthog.com) - For product analytics
 - [Sentry](https://sentry.io) - For reliable error tracking
 - All the amazing open-source libraries that make this possible
 

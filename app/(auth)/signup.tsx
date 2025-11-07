@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ActivityIndicator, ScrollView } from 'react-native';
 import { Link, router } from 'expo-router';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { Surface, IconButton } from 'react-native-paper';
 import { AuthService } from '../../src/infrastructure/auth';
 import { z } from 'zod';
 import { useScreenTracking } from '../../src/presentation/hooks/useScreenTracking';
 import { analytics, AnalyticsEvent } from '../../src/infrastructure/analytics';
+import { lightTheme } from '../../src/presentation/theme';
 
 /**
  * Sign Up Screen
@@ -64,45 +65,63 @@ export default function SignupScreen() {
         }
       });
       setErrors(fieldErrors);
+      
+      // Mostra anche un alert con il primo errore
+      const firstError = result.error.errors[0];
+      Alert.alert('Errore Validazione', firstError.message);
+      
       return;
     }
 
     setLoading(true);
 
-    const authResult = await AuthService.signUp({
-      email,
-      password,
-      fullName,
-      username,
-    });
+    try {
+      const authResult = await AuthService.signUp({
+        email,
+        password,
+        fullName,
+        username,
+      });
 
-    if (authResult.isFailure()) {
-      Alert.alert('Errore Registrazione', authResult.error.message);
+      // eslint-disable-next-line no-console
+      console.log('Signup result:', authResult.isSuccess() ? 'SUCCESS' : 'FAILURE');
+
+      if (authResult.isFailure()) {
+        console.error('Signup error:', authResult.error);
+        Alert.alert('Errore Registrazione', authResult.error.message);
+        setLoading(false);
+        return;
+      }
+
+      // eslint-disable-next-line no-console
+      console.log('Signup successful, user:', authResult.value);
+      
       setLoading(false);
-      return;
+      
+      // Track signup completed
+      analytics.track(AnalyticsEvent.SIGNUP_COMPLETED, {
+        auth_method: 'email',
+        has_username: !!username,
+        has_full_name: !!fullName,
+      });
+
+      // Show success message and redirect
+      Alert.alert(
+        '✅ Registrazione Completata!',
+        'Il tuo account è stato creato con successo. Puoi ora effettuare il login.',
+        [
+          {
+            text: 'Vai al Login',
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            onPress: () => router.replace('/(auth)/login' as any),
+          },
+        ]
+      );
+    } catch (error) {
+      console.error('Unexpected error during signup:', error);
+      Alert.alert('Errore', 'Si è verificato un errore imprevisto. Riprova.');
+      setLoading(false);
     }
-
-    setLoading(false);
-    
-    // Track signup completed
-    analytics.track(AnalyticsEvent.SIGNUP_COMPLETED, {
-      auth_method: 'email',
-      has_username: !!username,
-      has_full_name: !!fullName,
-    });
-
-    // Show success message
-    Alert.alert(
-      'Registrazione Completata',
-      'Controlla la tua email per verificare il tuo account',
-      [
-        {
-          text: 'OK',
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          onPress: () => router.replace('/(auth)/login' as any),
-        },
-      ]
-    );
   };
 
   const handleGoogleSignup = async () => {
@@ -130,32 +149,63 @@ export default function SignupScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollContent}>
-        <View style={styles.content}>
-          {/* Header */}
+    <View style={styles.container}>
+      <ScrollView 
+        contentContainerStyle={styles.scrollContent}
+        keyboardShouldPersistTaps="handled"
+      >
+        <Surface style={styles.surface} elevation={4}>
+          {/* Close Button */}
           <View style={styles.header}>
-            <Text style={styles.title}>Crea un Account</Text>
-            <Text style={styles.subtitle}>Inizia a scoprire nuovi libri</Text>
+            <IconButton
+              icon="close"
+              size={24}
+              onPress={() => router.replace('/(tabs)')}
+              style={styles.closeButton}
+            />
           </View>
 
-          {/* Form */}
-          <View style={styles.form}>
-            {/* Full Name Input */}
-            <View style={styles.inputContainer}>
-              <Text style={styles.label}>Nome Completo</Text>
-              <TextInput
-                style={[styles.input, errors.fullName && styles.inputError]}
-                placeholder="Mario Rossi"
-                placeholderTextColor="#999"
-                value={fullName}
-                onChangeText={setFullName}
-                autoCapitalize="words"
-                autoCorrect={false}
-                editable={!loading}
-              />
-              {errors.fullName && <Text style={styles.errorText}>{errors.fullName}</Text>}
-            </View>
+          {/* Icon */}
+          <View style={styles.iconContainer}>
+            <IconButton
+              icon="account-lock"
+              size={64}
+              iconColor={lightTheme.colors.primary}
+            />
+          </View>
+
+          {/* Title */}
+          <Text style={styles.title}>Accedi per salvare i tuoi preferiti</Text>
+
+          {/* Message */}
+          <Text style={styles.message}>
+            Per salvare questo libro tra i preferiti, hai bisogno di un account. Crea un account per sincronizzare i tuoi preferiti su tutti i dispositivi.
+          </Text>
+
+          {/* Benefits */}
+          <View style={styles.benefitsContainer}>
+            <BenefitItem icon="heart" text="Salva i tuoi libri preferiti" />
+            <BenefitItem icon="sync" text="Sincronizza su tutti i dispositivi" />
+            <BenefitItem icon="chart-line" text="Traccia la tua cronologia di lettura" />
+          </View>
+
+      {/* Form */}
+      <View style={styles.form}>
+        {/* Full Name Input */}
+        <View style={styles.inputContainer}>
+          <Text style={styles.label}>Nome Completo</Text>
+          <TextInput
+            style={[styles.input, errors.fullName && styles.inputError]}
+            placeholder="Mario Rossi"
+            placeholderTextColor="#999"
+            value={fullName}
+            onChangeText={setFullName}
+            autoCapitalize="words"
+            autoCorrect={false}
+            editable={!loading}
+          />
+          {errors.fullName && <Text style={styles.errorText}>{errors.fullName}</Text>}
+        </View>
 
             {/* Username Input */}
             <View style={styles.inputContainer}>
@@ -263,37 +313,90 @@ export default function SignupScreen() {
             <Text style={styles.termsLink}>Termini di Servizio</Text> e{' '}
             <Text style={styles.termsLink}>Privacy Policy</Text>
           </Text>
-        </View>
+        </Surface>
       </ScrollView>
-    </SafeAreaView>
+    </View>
+  );
+}
+
+// Helper component for benefits
+interface BenefitItemProps {
+  icon: string;
+  text: string;
+}
+
+function BenefitItem({ icon, text }: BenefitItemProps) {
+  return (
+    <View style={styles.benefitItem}>
+      <IconButton
+        icon={icon}
+        size={20}
+        iconColor={lightTheme.colors.primary}
+        style={styles.benefitIcon}
+      />
+      <Text style={styles.benefitText}>{text}</Text>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFF',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   scrollContent: {
     flexGrow: 1,
-  },
-  content: {
-    flex: 1,
-    padding: 24,
     justifyContent: 'center',
+    padding: 20,
+  },
+  surface: {
+    borderRadius: 16,
+    padding: 24,
+    backgroundColor: '#fff',
+    maxWidth: 600,
+    width: '100%',
+    alignSelf: 'center',
   },
   header: {
-    marginBottom: 32,
+    alignItems: 'flex-end',
+    marginBottom: -8,
+  },
+  closeButton: {
+    margin: 0,
+  },
+  iconContainer: {
+    alignItems: 'center',
+    marginBottom: 16,
   },
   title: {
-    fontSize: 32,
+    textAlign: 'center',
     fontWeight: 'bold',
-    color: '#000',
+    fontSize: 20,
+    marginBottom: 12,
+    color: lightTheme.colors.onSurface,
+  },
+  message: {
+    textAlign: 'center',
+    color: lightTheme.colors.onSurfaceVariant,
+    marginBottom: 24,
+    fontSize: 14,
+    lineHeight: 20,
+  },
+  benefitsContainer: {
+    marginBottom: 24,
+  },
+  benefitItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
     marginBottom: 8,
   },
-  subtitle: {
-    fontSize: 16,
-    color: '#666',
+  benefitIcon: {
+    margin: 0,
+    marginRight: 8,
+  },
+  benefitText: {
+    fontSize: 14,
+    color: lightTheme.colors.onSurface,
   },
   form: {
     marginBottom: 24,
@@ -331,14 +434,14 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   button: {
-    height: 50,
+    height: 56,
     borderRadius: 12,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 12,
   },
   primaryButton: {
-    backgroundColor: '#007AFF',
+    backgroundColor: '#1E3A5F',
   },
   buttonDisabled: {
     opacity: 0.5,
@@ -377,6 +480,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     marginTop: 24,
+    paddingTop: 24,
+    borderTopWidth: 1,
+    borderTopColor: '#E5E5E5',
   },
   footerText: {
     fontSize: 14,
@@ -384,7 +490,7 @@ const styles = StyleSheet.create({
   },
   footerLink: {
     fontSize: 14,
-    color: '#007AFF',
+    color: '#1E3A5F',
     fontWeight: '600',
   },
   terms: {
@@ -394,6 +500,6 @@ const styles = StyleSheet.create({
     marginTop: 16,
   },
   termsLink: {
-    color: '#007AFF',
+    color: '#1E3A5F',
   },
 });

@@ -6,3 +6,4 @@
 
 export * from './auth';
 export { AuthService } from './auth';
+export { AdminGuard } from './AdminGuard';

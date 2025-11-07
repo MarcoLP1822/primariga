@@ -1,246 +1,277 @@
-# ✅ Testing Checklist - Dispositivi Reali
+# ✅ Testing Checklist - Mobile Devices
 
-**Quick Reference** per sessioni di testing su iPhone e Android
-
----
-
-## 🎯 Test Rapido (10 minuti)
-
-**Happy Path - Flusso Principale**:
-
-- [ ] Avvia app → Feed carica in < 3 sec (modalità anonima)
-- [ ] Scorri 5 prime righe → Scroll fluido 60fps
-- [ ] Tap ❤️ su 1 libro → AuthPrompt appare (richiede signup)
-- [ ] Tap "Crea Account" → Screen signup si apre
-- [ ] Completa signup → Verifica email → Login
-- [ ] Tap ❤️ su libro → Like salvato (ora autenticato)
-- [ ] Tap su card libro → Dettaglio si apre
-- [ ] Tap su link Amazon → Browser si apre
-- [ ] Back → Torna al feed
-- [ ] Vai a tab Favorites → Libro piaciuto c'è
-- [ ] Vai a tab Profilo → Tap "Esci"
-- [ ] Vai a tab Favorites → Lista vuota (logout funziona)
-- [ ] Pull to refresh → Lista aggiorna
-
-**Risultato atteso**: ✅ Tutto funziona senza crash/lag
+**Device**: _____________ (es. iPhone 15 Pro, Samsung Galaxy S23)  
+**OS**: _____________ (es. iOS 17.1, Android 14)  
+**Tester**: _____________  
+**Data**: _____________
 
 ---
 
-## 📱 Test Completo per Device (30 minuti)
+## ⚡ Test Veloce (5 minuti)
 
-### 📋 Setup Iniziale
+**Happy Path - Core Flow**:
 
-- [ ] Device: _________________ (es. iPhone 15 Pro)
-- [ ] OS: _________________ (es. iOS 17.1)
-- [ ] Build: _________________ (es. 1.0.0)
-- [ ] Tester: _________________ (nome)
-- [ ] Data: _________________ (5 Nov 2025)
+- [ ] ✅ App si avvia in < 3 secondi
+- [ ] ✅ Feed mostra prime righe di libri
+- [ ] ✅ Scroll è fluido (60fps, no lag)
+- [ ] ✅ Tap ❤️ (like) → Like salvato
+- [ ] ✅ Tap su card → Dettaglio libro si apre
+- [ ] ✅ Tap link Amazon → Browser si apre
+- [ ] ✅ Tab Favorites → Libro piaciuto appare
+- [ ] ✅ Pull to refresh → Lista si aggiorna
 
----
+**Risultato**: ✅ Tutto OK / ⚠️ Problemi minori / ❌ Bug critici
 
-### 1️⃣ PERFORMANCE (5 min)
-
-**Scroll Performance**:
-
-- [ ] Scroll feed veloce → ✅ Fluido / ❌ Lag
-- [ ] Scroll 50+ libri → ✅ No slowdown / ❌ Rallenta
-- [ ] Immagini caricano → ✅ Progressive / ❌ Blocca UI
-
-**Load Times**:
-
-- [ ] Cold start → _______ sec (target < 3s)
-- [ ] Warm start → _______ sec (target < 1s)
-- [ ] Open dettaglio libro → _______ ms (target < 500ms)
-
-**Memory**:
-
-- [ ] Usa app 15 min continui → ✅ Stabile / ❌ Crash/Slow
-
-**Notes**: ____________________________________________
+**Note**: ____________________________________________
 
 ---
 
-### 2️⃣ FUNZIONALITÀ (10 min)
+## 📱 Test Completo (20 minuti)
+
+### 1. PERFORMANCE (5 min)
+
+**Scroll & Fluidità**:
+- [ ] Scroll feed veloce → 60fps costanti
+- [ ] Scroll 50+ libri → No slowdown
+- [ ] Immagini caricano → Progressivamente, no blocchi UI
+
+**Load Times** (cronometra):
+- [ ] Cold start → _____ sec (target: < 3s)
+- [ ] Warm start → _____ sec (target: < 1s)
+- [ ] Apri dettaglio libro → _____ ms (target: < 500ms)
+
+**Memoria & Stabilità**:
+- [ ] Usa app 15 minuti continui → No crash, no rallentamenti
+- [ ] Apri/chiudi app 5 volte → Sempre veloce
+
+**Note**: ____________________________________________
+
+---
+
+### 2. FUNZIONALITÀ (5 min)
 
 **Home Feed**:
-
-- [ ] Prima riga leggibile e ben formattata
-- [ ] Titolo/autore nascosti (blind mode)
+- [ ] Prima riga è leggibile e ben formattata
+- [ ] Titolo e autore NASCOSTI (blind mode)
 - [ ] Cover image carica (se presente)
-- [ ] Like button risponde
-- [ ] Next button carica prossimo libro
-- [ ] Dettaglio si apre con tap
+- [ ] ❤️ Like button risponde al tap
+- [ ] Next/Skip carica prossima riga
+- [ ] Tap su card apre dettaglio
 
-**Dettaglio Libro**:
-
-- [ ] Mostra: titolo, autore, descrizione, anno, generi
-- [ ] Cover ad alta qualità
-- [ ] Link Amazon funziona
+**Dettaglio Libro (Modal)**:
+- [ ] Mostra: titolo, autore, descrizione, anno, pagine, generi
+- [ ] Cover image alta qualità
+- [ ] Link Amazon funziona → Apre Safari/Amazon app
 - [ ] Close button (X) chiude modal
-- [ ] Swipe down chiude (iOS) / Back button (Android)
+- [ ] Swipe down chiude modal (gesture iOS)
+- [ ] Animazione apertura/chiusura fluida
+
+**Tab Navigation**:
+- [ ] Home tab (🏠) → Feed libri
+- [ ] Favorites tab (❤️) → Libri piaciuti
+- [ ] Profile tab (👤) → Profilo utente
+- [ ] Switch tra tab istantaneo
+- [ ] Stato preservato tornando a tab
 
 **Favorites**:
+- [ ] Mostra tutti i libri con like
+- [ ] Tap su libro → Apre dettaglio
+- [ ] Unlike (tap ❤️ di nuovo) → Rimuove da lista
+- [ ] Empty state se nessun favorite
 
-- [ ] **Anonimo**: Empty state con invito a registrarsi
-- [ ] **Autenticato**: Mostra tutti i libri piaciuti
-- [ ] Tap apre dettaglio
-- [ ] Unlike rimuove da lista
-- [ ] Dopo logout → Lista si svuota
-- [ ] Dopo re-login → Likes riappaiono
-
-**Profile**:
-
-- [ ] **Anonimo**: View con invito + button "Crea Account"
-- [ ] **Autenticato**: User info + stats + logout button
-- [ ] Stats accurate (libri esplorati, preferiti)
-- [ ] Logout funziona → Torna a view anonimo
-
-**Auth Flow**:
-
-- [ ] AuthPrompt appare quando anonimo tenta like
-- [ ] Dismiss prompt → Rimane anonimo
-- [ ] Signup completo → Session salvata
-- [ ] Verifica email ricevuta
-- [ ] Login dopo logout → Session ripristinata
-- [ ] Forgot password → Email reset ricevuta
-
-**Notes**: ____________________________________________
+**Note**: ____________________________________________
 
 ---
 
-### 3️⃣ NETWORK (5 min)
+### 3. iOS NATIVE FEATURES (3 min)
+
+**Gesture Native**:
+- [ ] Swipe da sinistra → Back navigation
+- [ ] Swipe down su modal → Chiude modal
+- [ ] Pull to refresh → Aggiorna feed
+- [ ] Long press → [Se implementato]
+
+**Safe Area**:
+- [ ] Status bar non copre contenuto
+- [ ] Notch/Dynamic Island lascia spazio al contenuto
+- [ ] Home indicator (barra bassa) non copre buttons
+
+**Dark Mode** (Settings → Display → Dark):
+- [ ] Attiva Dark Mode → App adatta colori
+- [ ] Testo leggibile su sfondo scuro
+- [ ] Contrasto adeguato
+
+**Keyboard**:
+- [ ] Keyboard appare correttamente (se ci sono input)
+- [ ] Layout non si rompe con keyboard visibile
+- [ ] Return key ha label corretto
+
+**Note**: ____________________________________________
+
+---
+
+### 4. NETWORK (3 min)
 
 **WiFi Veloce**:
+- [ ] Feed carica in < 2 secondi
+- [ ] Like sincronizza istantaneamente
 
-- [ ] Feed carica in < 2 sec
-- [ ] Like sync istantaneo
+**4G/5G**:
+- [ ] Feed carica correttamente
+- [ ] Immagini caricano (più lente ma ok)
 
-**Connessione Lenta** (attiva 3G/throttling):
-
-- [ ] Loading indicators mostrano
-- [ ] Timeout gestito con retry
-- [ ] App non crasha
-
-**Offline** (modalità aereo):
-
-- [ ] Cached data mostra libri visti
+**Modalità Aereo** (Attivala):
+- [ ] App mostra cached data (libri già visti)
 - [ ] Error message "Nessuna connessione"
-- [ ] Riconnessione → Auto-sync
+- [ ] App NON crasha
 
-**Notes**: ____________________________________________
+**Riconnessione** (Disattiva modalità aereo):
+- [ ] App rileva connessione tornata
+- [ ] Like offline vengono sincronizzati
+- [ ] Feed si aggiorna automaticamente
+
+**Note**: ____________________________________________
 
 ---
 
-### 4️⃣ UI/UX (5 min)
+### 5. UI/UX (2 min)
 
-**Layout**:
-
-- [ ] Testo leggibile su questo device
+**Layout su QUESTO device**:
+- [ ] Testo leggibile (dimensione adeguata)
 - [ ] Buttons facilmente tappabili (min 44pt)
 - [ ] Immagini non distorte
-- [ ] No elementi tagliati/sovrapposti
-
-**Navigazione**:
-
-- [ ] Tab switch istantaneo
-- [ ] Back navigation funziona (Android)
-- [ ] Gesture navigation funziona (iOS)
+- [ ] No elementi tagliati o sovrapposti
+- [ ] Spaziature corrette
 
 **Animazioni**:
+- [ ] Transizioni fluide tra schermate
+- [ ] Modal apre/chiude smooth
+- [ ] No freeze o jank
 
-- [ ] Transizioni smooth
-- [ ] Modal apre/chiude fluidamente
-- [ ] No jank o freeze
+**Feedback Visivo**:
+- [ ] Tap su bottoni → Visual feedback (colore/animazione)
+- [ ] Loading indicators mostrano durante caricamenti
+- [ ] Error states hanno messaggi chiari
 
-**Notes**: ____________________________________________
-
----
-
-### 5️⃣ ERROR HANDLING (3 min)
-
-Testa questi scenari:
-
-- [ ] **Force quit app** → Riapri → Stato recuperato
-- [ ] **Tap link rotto** → Error message appropriato
-- [ ] **Backend timeout** → Retry button funziona
-
-**Notes**: ____________________________________________
+**Note**: ____________________________________________
 
 ---
 
-### 6️⃣ EDGE CASES (2 min)
+### 6. EDGE CASES (2 min)
 
-- [ ] **Libro senza cover** → Placeholder mostra
-- [ ] **Autore nome lungo** → Truncate corretto
-- [ ] **Descrizione vuota** → Placeholder text
+- [ ] Libro senza cover → Placeholder mostra
+- [ ] Libro senza link acquisto → Button disabilitato o nascosto
+- [ ] Nome autore lunghissimo → Text truncate (...)
+- [ ] Descrizione vuota → Placeholder o nascosta
+- [ ] Force quit app → Riapri → Stato recuperato
 
-**Notes**: ____________________________________________
+**Note**: ____________________________________________
 
 ---
 
 ## 🐛 BUG TROVATI
 
-Usa questo formato per ogni bug:
-
 ### Bug #1
-
-- **Severity**: 🔴 Critical / 🟠 High / 🟡 Medium / 🟢 Low
-- **Descrizione**: _______________________________________
+- **🔴 Priority**: Critical / High / Medium / Low
+- **Descrizione**: ____________________________________
 - **Steps to Reproduce**:
-  1. _______________________________________
-  2. _______________________________________
-- **Expected**: _______________________________________
-- **Actual**: _______________________________________
-- **Screenshot**: [Allega se possibile]
+  1. ____________________________________
+  2. ____________________________________
+- **Expected**: ____________________________________
+- **Actual**: ____________________________________
+- **Screenshot**: [Allega]
 
 ### Bug #2
+- **Priority**: _______
+- **Descrizione**: ____________________________________
 
-- **Severity**: _______
-- **Descrizione**: _______________________________________
-- **Steps**: _______________________________________
+### Bug #3
+- **Priority**: _______
+- **Descrizione**: ____________________________________
 
 ---
 
-## 💡 FEEDBACK & SUGGERIMENTI
+## 💡 FEEDBACK
 
 **Cosa ti è piaciuto**:
-
-- _______________________________________
-- _______________________________________
+- ____________________________________________
+- ____________________________________________
+- ____________________________________________
 
 **Cosa miglioreresti**:
+- ____________________________________________
+- ____________________________________________
+- ____________________________________________
 
-- _______________________________________
-- _______________________________________
+**Feature che vorresti**:
+- ____________________________________________
+- ____________________________________________
 
-**Feature richieste**:
-
-- _______________________________________
-- _______________________________________
+**Compresti libri scoperti su Primariga?**  
+☐ Sì, sicuramente  
+☐ Probabilmente sì  
+☐ Forse  
+☐ Probabilmente no  
+☐ No
 
 ---
 
 ## ⭐ RATING FINALE
 
-**Performance**: ⭐⭐⭐⭐⭐ (1-5)  
-**Stabilità**: ⭐⭐⭐⭐⭐ (1-5)  
-**UI/UX**: ⭐⭐⭐⭐⭐ (1-5)  
-**Funzionalità**: ⭐⭐⭐⭐⭐ (1-5)
+**Performance** (velocità, fluidità): ⭐⭐⭐⭐⭐ (1-5)
 
-**Overall**: ⭐⭐⭐⭐⭐ (1-5)
+**Stabilità** (crash, bug): ⭐⭐⭐⭐⭐ (1-5)
 
-**Consiglieresti l'app?** ✅ Sì / ❌ No / 🤔 Forse
+**UI/UX** (design, usabilità): ⭐⭐⭐⭐⭐ (1-5)
 
-**Compresti libri scoperti?** ✅ Sì / ❌ No / 🤔 Forse
+**Funzionalità** (tutto funziona): ⭐⭐⭐⭐⭐ (1-5)
+
+**Overall** (impressione generale): ⭐⭐⭐⭐⭐ (1-5)
+
+**Consiglieresti l'app?**  
+☐ Sì  
+☐ Forse  
+☐ No
 
 ---
 
-## 📤 SUBMIT
+## 📊 METRICHE
 
-Dopo completato testing:
+**Usage**:
+- Prime righe lette: _____ (quante?)
+- Libri con like: _____ (quanti?)
+- Link Amazon aperti: _____ (volte)
+- Tempo totale testing: _____ minuti
 
-1. Salva questo file come `test-report-[device]-[date].md`
-2. Apri issue GitHub per ogni bug trovato
-3. Condividi feedback con team
+**Performance Misurate**:
+- Cold start: _____ sec
+- Scroll FPS: _____ fps (usa Xcode Instruments se disponibile)
+- Memory usage: _____ MB
 
-**Grazie! 🙏**
+---
+
+## 📝 NOTE AGGIUNTIVE
+
+____________________________________________
+____________________________________________
+____________________________________________
+____________________________________________
+
+---
+
+**Testing completato**: ☐ Sì ☐ No (parziale)
+
+**Data completamento**: _____________
+
+**Firma tester**: _____________
+
+---
+
+**Salva questo file come**: `test-report-iphone-[modello]-[data].md`
+
+**Poi**:
+1. Apri GitHub Issues per ogni bug 🔴/🟠
+2. Condividi feedback con team
+3. Se tutto OK → Passa a beta testing con più utenti
+
+**Grazie! 🙏📱**

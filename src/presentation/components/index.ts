@@ -6,14 +6,14 @@ export { BookInfoCard } from './BookInfoCard';
 export { LoadingSpinner } from './LoadingSpinner';
 export { ErrorMessage } from './ErrorMessage';
 export * from './ErrorBoundary';
-export * from './AuthPrompt';
-
+export { AuthModal } from './AuthModal';
 export { RouteErrorBoundary } from './RouteErrorBoundary';
 export { OptimizedImage } from './OptimizedImage';
 export { Tag } from './Tag';
 export { Divider } from './Divider';
 export { EmptyState } from './EmptyState';
 export { Snackbar } from './Snackbar';
+export { PasswordStrengthIndicator } from './PasswordStrengthIndicator';
 
 export type { CardProps } from './Card';
 export type { ButtonProps } from './Button';
@@ -22,6 +22,7 @@ export type { BookLineCardProps } from './BookLineCard';
 export type { BookInfoCardProps } from './BookInfoCard';
 export type { LoadingSpinnerProps } from './LoadingSpinner';
 export type { ErrorMessageProps } from './ErrorMessage';
+export type { AuthModalProps } from './AuthModal';
 export type { TagProps } from './Tag';
 export type { DividerProps } from './Divider';
 export type { EmptyStateProps } from './EmptyState';

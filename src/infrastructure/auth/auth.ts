@@ -125,7 +125,8 @@ export const signUp = async (params: SignUpParams): Promise<Result<User, AppErro
           full_name: fullName,
           username: username,
         },
-        emailRedirectTo: `${window.location.origin}/auth/callback`, // Per web
+        // emailRedirectTo solo per web, non necessario per React Native
+        // React Native usa deep linking automaticamente tramite Expo
       },
     });
 
@@ -184,8 +185,8 @@ export const signInWithOAuth = async (params: OAuthProvider): Promise<Result<voi
     const { error } = await supabase.auth.signInWithOAuth({
       provider,
       options: {
-        redirectTo: redirectTo || `${window.location.origin}/auth/callback`,
-        skipBrowserRedirect: false, // Per mobile, Expo gestisce il redirect
+        redirectTo: redirectTo, // Per React Native, Expo gestisce automaticamente il deep linking
+        skipBrowserRedirect: false,
       },
     });
 
@@ -224,7 +225,7 @@ export const resetPassword = async (params: ResetPasswordParams): Promise<Result
     const { email } = params;
 
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/auth/reset-password`,
+      // redirectTo solo per web, non necessario per React Native
     });
 
     if (error) {

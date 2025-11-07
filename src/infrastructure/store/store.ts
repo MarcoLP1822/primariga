@@ -16,6 +16,7 @@ interface UserProfile {
   fullName: string | null;
   avatarUrl: string | null;
   bio: string | null;
+  role: 'user' | 'admin' | 'super_admin';
 }
 
 /**
@@ -38,6 +39,9 @@ interface UserState {
 
   // Anonymous user support
   isAnonymous: boolean; // true se utente non ha mai fatto login
+
+  // Admin state (derived from profile.role)
+  isAdmin: boolean; // true se role === 'admin' || role === 'super_admin'
 
   // Actions
   setUser: (userId: string | null) => Promise<void>;
@@ -86,6 +90,7 @@ export const useAppStore = create<AppStore>()(
       isAuthenticated: false,
       isAnonymous: true, // Default: user inizia come anonimo
       profile: null,
+      isAdmin: false, // Default: non admin
 
       // Set user by ID and fetch profile
       setUser: async (userId: string | null) => {
@@ -96,6 +101,7 @@ export const useAppStore = create<AppStore>()(
             isAuthenticated: false,
             isAnonymous: true,
             profile: null,
+            isAdmin: false,
           });
           return;
         }
@@ -104,7 +110,7 @@ export const useAppStore = create<AppStore>()(
         try {
           const { data, error } = await supabase
             .from('profiles')
-            .select('id, username, full_name, avatar_url, bio')
+            .select('id, username, full_name, avatar_url, bio, role')
             .eq('id', userId)
             .single();
 
@@ -112,17 +118,21 @@ export const useAppStore = create<AppStore>()(
           const profileData = data as any; // Type workaround for Supabase generated types
 
           if (!error && profileData) {
+            const profile = {
+              id: profileData.id,
+              username: profileData.username || null,
+              fullName: profileData.full_name || null,
+              avatarUrl: profileData.avatar_url || null,
+              bio: profileData.bio || null,
+              role: profileData.role || 'user',
+            };
+            
             set({
               userId,
               isAuthenticated: true,
               isAnonymous: false,
-              profile: {
-                id: profileData.id,
-                username: profileData.username || null,
-                fullName: profileData.full_name || null,
-                avatarUrl: profileData.avatar_url || null,
-                bio: profileData.bio || null,
-              },
+              profile,
+              isAdmin: profile.role === 'admin' || profile.role === 'super_admin',
             });
           } else {
             // Profile not found, still set userId
@@ -131,6 +141,7 @@ export const useAppStore = create<AppStore>()(
               isAuthenticated: true,
               isAnonymous: false,
               profile: null,
+              isAdmin: false,
             });
           }
         } catch (error) {
@@ -140,6 +151,7 @@ export const useAppStore = create<AppStore>()(
             isAuthenticated: true,
             isAnonymous: false,
             profile: null,
+            isAdmin: false,
           });
         }
       },
@@ -153,6 +165,7 @@ export const useAppStore = create<AppStore>()(
             isAuthenticated: false,
             isAnonymous: true,
             profile: null,
+            isAdmin: false,
           });
           
           // IMPORTANT: Invalida cache React Query per likes quando user diventa anonimo
@@ -169,7 +182,7 @@ export const useAppStore = create<AppStore>()(
         try {
           const { data, error } = await supabase
             .from('profiles')
-            .select('id, username, full_name, avatar_url, bio')
+            .select('id, username, full_name, avatar_url, bio, role')
             .eq('id', userId)
             .single();
 
@@ -183,6 +196,7 @@ export const useAppStore = create<AppStore>()(
               fullName: profileData.full_name || null,
               avatarUrl: profileData.avatar_url || null,
               bio: profileData.bio || null,
+              role: profileData.role || 'user',
             };
             
             set({
@@ -191,6 +205,7 @@ export const useAppStore = create<AppStore>()(
               isAuthenticated: true,
               isAnonymous: false,
               profile,
+              isAdmin: profile.role === 'admin' || profile.role === 'super_admin',
             });
             
             // Identify user in analytics
@@ -207,6 +222,7 @@ export const useAppStore = create<AppStore>()(
               isAuthenticated: true,
               isAnonymous: false,
               profile: null,
+              isAdmin: false,
             });
             
             // Identify user in analytics (even without profile)
@@ -222,6 +238,7 @@ export const useAppStore = create<AppStore>()(
             isAuthenticated: true,
             isAnonymous: false,
             profile: null,
+            isAdmin: false,
           });
           
           // Identify user in analytics (even on error)
@@ -244,6 +261,7 @@ export const useAppStore = create<AppStore>()(
           isAuthenticated: false,
           isAnonymous: true, // Torna anonimo dopo logout
           profile: null,
+          isAdmin: false,
           // Reset UI state
           selectedGenres: [],
           selectedLanguage: 'it',
@@ -263,7 +281,7 @@ export const useAppStore = create<AppStore>()(
         try {
           const { data, error } = await supabase
             .from('profiles')
-            .select('id, username, full_name, avatar_url, bio')
+            .select('id, username, full_name, avatar_url, bio, role')
             .eq('id', userId)
             .single();
 
@@ -271,14 +289,18 @@ export const useAppStore = create<AppStore>()(
           const profileData = data as any; // Type workaround for Supabase generated types
 
           if (!error && profileData) {
+            const profile = {
+              id: profileData.id,
+              username: profileData.username || null,
+              fullName: profileData.full_name || null,
+              avatarUrl: profileData.avatar_url || null,
+              bio: profileData.bio || null,
+              role: profileData.role || 'user',
+            };
+            
             set({
-              profile: {
-                id: profileData.id,
-                username: profileData.username || null,
-                fullName: profileData.full_name || null,
-                avatarUrl: profileData.avatar_url || null,
-                bio: profileData.bio || null,
-              },
+              profile,
+              isAdmin: profile.role === 'admin' || profile.role === 'super_admin',
             });
           }
         } catch (error) {
@@ -301,6 +323,7 @@ export const useAppStore = create<AppStore>()(
               isAuthenticated: false,
               isAnonymous: true,
               profile: null,
+              isAdmin: false,
             });
             
             // IMPORTANT: Clear React Query cache for likes
@@ -317,6 +340,7 @@ export const useAppStore = create<AppStore>()(
             isAuthenticated: false,
             isAnonymous: true,
             profile: null,
+            isAdmin: false,
           });
           queryClient.invalidateQueries({ queryKey: ['likedBooks'] });
           queryClient.invalidateQueries({ queryKey: ['isBookLiked'] });

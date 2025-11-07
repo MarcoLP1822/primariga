@@ -93,5 +93,7 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     gap: spacing.xs,
     marginTop: spacing.xs,
+    // Assicura che i tag abbiano spazio sufficiente
+    alignItems: 'flex-start',
   },
 });

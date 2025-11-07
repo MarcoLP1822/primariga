@@ -3,14 +3,14 @@ import { Text, Card } from 'react-native-paper';
 import { useLikedBooks } from '../../src/presentation/hooks/useLikes';
 import { useAppStore } from '../../src/infrastructure/store/store';
 import { spacing } from '../../src/presentation/theme/spacing';
-import { Button, Divider, AuthPrompt } from '../../src/presentation/components';
+import { Button, Divider, AuthModal } from '../../src/presentation/components';
 import { useState } from 'react';
 import { useScreenTracking } from '../../src/presentation/hooks/useScreenTracking';
 
 /**
  * Profile Screen - Profilo utente con statistiche
  * 
- * IMPORTANTE: Mostra AuthPrompt se l'utente è anonimo, altrimenti profilo completo
+ * IMPORTANTE: Mostra AuthModal con intro per utenti anonimi, altrimenti profilo completo
  */
 export default function ProfileScreen() {
   // Track screen view
@@ -18,10 +18,13 @@ export default function ProfileScreen() {
   
   const { data: likedBooks } = useLikedBooks();
   const seenBookIds = useAppStore((state) => state.seenBookIds);
+  const profile = useAppStore((state) => state.profile);
   const clearSeenBooks = useAppStore((state) => state.clearSeenBooks);
   const logout = useAppStore((state) => state.logout);
   const isAnonymous = useAppStore((state) => state.isAnonymous);
   const [showAuthPrompt, setShowAuthPrompt] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [authMode, setAuthMode] = useState<'login' | 'signup'>('signup');
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const stats = {
@@ -92,11 +95,25 @@ export default function ProfileScreen() {
           <Card.Content>
             <Button
               mode="contained"
-              onPress={() => setShowAuthPrompt(true)}
+              onPress={() => {
+                setAuthMode('signup');
+                setShowAuthModal(true);
+              }}
               style={styles.actionButton}
               icon="account-plus"
             >
               Crea Account
+            </Button>
+            <Button
+              mode="outlined"
+              onPress={() => {
+                setAuthMode('login');
+                setShowAuthModal(true);
+              }}
+              style={styles.actionButton}
+              icon="login"
+            >
+              Accedi
             </Button>
             <Button
               mode="outlined"
@@ -109,11 +126,17 @@ export default function ProfileScreen() {
           </Card.Content>
         </Card>
 
-        <AuthPrompt
-          visible={showAuthPrompt}
-          onDismiss={() => setShowAuthPrompt(false)}
+        {/* AuthModal unificato per utenti anonimi */}
+        <AuthModal
+          visible={showAuthModal || showAuthPrompt}
+          onClose={() => {
+            setShowAuthModal(false);
+            setShowAuthPrompt(false);
+          }}
+          showIntro={showAuthPrompt}
+          mode={authMode}
+          introTitle="Crea il tuo account"
           action="salvare i tuoi preferiti e accedere a tutte le funzionalità"
-          title="Crea il tuo account"
         />
       </ScrollView>
     );
@@ -130,6 +153,43 @@ export default function ProfileScreen() {
           Il tuo profilo
         </Text>
       </View>
+
+      {/* Card Informazioni Account */}
+      <Card style={styles.accountCard} mode="elevated">
+        <Card.Content>
+          <Text variant="titleMedium" style={styles.accountTitle}>
+            👋 Benvenuto!
+          </Text>
+          <Divider style={styles.divider} />
+          
+          <View style={styles.accountInfo}>
+            <View style={styles.infoRow}>
+              <Text variant="bodyMedium" style={styles.infoLabel}>Nome:</Text>
+              <Text variant="bodyLarge" style={styles.infoValue}>
+                {profile?.fullName || 'Non impostato'}
+              </Text>
+            </View>
+            
+            {profile?.username && (
+              <View style={styles.infoRow}>
+                <Text variant="bodyMedium" style={styles.infoLabel}>Username:</Text>
+                <Text variant="bodyLarge" style={styles.infoValue}>
+                  @{profile.username}
+                </Text>
+              </View>
+            )}
+            
+            <View style={styles.infoRow}>
+              <Text variant="bodyMedium" style={styles.infoLabel}>Ruolo:</Text>
+              <Text variant="bodyLarge" style={styles.infoValue}>
+                {profile?.role === 'admin' ? '👑 Admin' : 
+                 profile?.role === 'super_admin' ? '⭐ Super Admin' : 
+                 '📚 Lettore'}
+              </Text>
+            </View>
+          </View>
+        </Card.Content>
+      </Card>
 
       <Card style={styles.statsCard} mode="elevated">
         <Card.Content>
@@ -154,6 +214,90 @@ export default function ProfileScreen() {
         </Card.Content>
       </Card>
 
+      {/* Card Impostazioni Account */}
+      <Card style={styles.settingsCard} mode="elevated">
+        <Card.Content>
+          <Text variant="titleMedium" style={styles.settingsTitle}>
+            ⚙️ Impostazioni Account
+          </Text>
+          <Divider style={styles.divider} />
+          
+          <View style={styles.settingsList}>
+            <View style={styles.settingItem}>
+              <View style={styles.settingInfo}>
+                <Text variant="bodyLarge" style={styles.settingLabel}>🔐 Password</Text>
+                <Text variant="bodySmall" style={styles.settingDescription}>
+                  Modifica la tua password
+                </Text>
+              </View>
+              <Button 
+                mode="outlined" 
+                onPress={() => {
+                  // TODO: Implementare cambio password
+                }}
+                style={styles.settingButton}
+              >
+                Cambia
+              </Button>
+            </View>
+
+            <View style={styles.settingItem}>
+              <View style={styles.settingInfo}>
+                <Text variant="bodyLarge" style={styles.settingLabel}>📧 Email</Text>
+                <Text variant="bodySmall" style={styles.settingDescription}>
+                  Gestisci il tuo indirizzo email
+                </Text>
+              </View>
+              <Button 
+                mode="outlined" 
+                onPress={() => {
+                  // TODO: Implementare modifica email
+                }}
+                style={styles.settingButton}
+              >
+                Modifica
+              </Button>
+            </View>
+
+            <View style={styles.settingItem}>
+              <View style={styles.settingInfo}>
+                <Text variant="bodyLarge" style={styles.settingLabel}>🔔 Notifiche</Text>
+                <Text variant="bodySmall" style={styles.settingDescription}>
+                  Configura le tue preferenze di notifica
+                </Text>
+              </View>
+              <Button 
+                mode="outlined" 
+                onPress={() => {
+                  // TODO: Implementare gestione notifiche
+                }}
+                style={styles.settingButton}
+              >
+                Gestisci
+              </Button>
+            </View>
+
+            <View style={styles.settingItem}>
+              <View style={styles.settingInfo}>
+                <Text variant="bodyLarge" style={styles.settingLabel}>🗑️ Elimina Account</Text>
+                <Text variant="bodySmall" style={styles.settingDescription}>
+                  Rimuovi permanentemente il tuo account
+                </Text>
+              </View>
+              <Button 
+                mode="outlined" 
+                onPress={() => {
+                  // TODO: Implementare eliminazione account
+                }}
+                style={styles.deleteButton}
+              >
+                Elimina
+              </Button>
+            </View>
+          </View>
+        </Card.Content>
+      </Card>
+
       <Card style={styles.infoCard} mode="elevated">
         <Card.Content>
           <Text variant="titleMedium" style={styles.infoTitle}>
@@ -173,7 +317,7 @@ export default function ProfileScreen() {
       <Card style={styles.actionsCard} mode="elevated">
         <Card.Content>
           <Text variant="titleMedium" style={styles.actionsTitle}>
-            ⚙️ Azioni
+            🔧 Azioni Rapide
           </Text>
           <Divider style={styles.divider} />
 
@@ -204,9 +348,20 @@ export default function ProfileScreen() {
           Primariga v1.0.0
         </Text>
         <Text variant="bodySmall" style={styles.footerText}>
-          Made with ❤️
+          Made with ❤️ by Marco Luigi Palma
         </Text>
       </View>
+
+      {/* Auth Modal per azioni varie */}
+      <AuthModal 
+        visible={showAuthModal || showAuthPrompt}
+        onClose={() => {
+          setShowAuthModal(false);
+          setShowAuthPrompt(false);
+        }}
+        mode={authMode}
+        showIntro={showAuthPrompt} 
+      />
     </ScrollView>
   );
 }
@@ -230,6 +385,30 @@ const styles = StyleSheet.create({
   title: {
     textAlign: 'center',
   },
+  accountCard: {
+    marginBottom: spacing.md,
+  },
+  accountTitle: {
+    marginBottom: spacing.sm,
+  },
+  accountInfo: {
+    gap: spacing.md,
+  },
+  infoRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: spacing.xs,
+  },
+  infoLabel: {
+    opacity: 0.7,
+    flex: 1,
+  },
+  infoValue: {
+    fontWeight: '600',
+    flex: 2,
+    textAlign: 'right',
+  },
   statsCard: {
     marginBottom: spacing.md,
   },
@@ -247,6 +426,39 @@ const styles = StyleSheet.create({
   },
   statValue: {
     fontWeight: 'bold',
+  },
+  settingsCard: {
+    marginBottom: spacing.md,
+  },
+  settingsTitle: {
+    marginBottom: spacing.sm,
+  },
+  settingsList: {
+    gap: spacing.lg,
+  },
+  settingItem: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    gap: spacing.md,
+  },
+  settingInfo: {
+    flex: 1,
+  },
+  settingLabel: {
+    fontWeight: '600',
+    marginBottom: spacing.xs,
+  },
+  settingDescription: {
+    opacity: 0.6,
+    lineHeight: 18,
+  },
+  settingButton: {
+    minWidth: 90,
+  },
+  deleteButton: {
+    minWidth: 90,
+    borderColor: '#d32f2f',
   },
   anonymousNote: {
     marginTop: spacing.md,

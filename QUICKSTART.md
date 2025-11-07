@@ -16,7 +16,9 @@ L'applicazione MVP è ora completamente configurata con:
 - ✅ Testing infrastructure (74 tests)
 - ✅ CI/CD pipeline completa
 - ✅ Sentry error tracking
-- ✅ PostHog analytics tracking
+- ✅ PostHog analytics tracking (20+ eventi)
+- ✅ Admin system (ruoli e permessi)
+- ✅ Security features enterprise-grade
 
 ## 🎯 Come Avviare l'App
 
@@ -108,8 +110,8 @@ L'app implementa **Optional Auth pattern**:
 - ✅ Supabase Auth con email/password e OAuth (Google, Apple)
 
 **Guide rapide**:
-- [QUICKSTART_AUTH.md](./QUICKSTART_AUTH.md) - Setup auth completo
-- [QUICKSTART_OPTIONAL_AUTH.md](./QUICKSTART_OPTIONAL_AUTH.md) - Pattern reference
+- [docs/SUPABASE_AUTH_IMPLEMENTATION.md](./docs/SUPABASE_AUTH_IMPLEMENTATION.md) - Setup auth completo
+- [docs/OPTIONAL_AUTH_IMPLEMENTATION.md](./docs/OPTIONAL_AUTH_IMPLEMENTATION.md) - Pattern reference
 
 **Flusso utente**:
 1. User apre app → accesso immediato
@@ -171,7 +173,7 @@ Modifica `app/(tabs)/_layout.tsx`
 - [ ] Build per dispositivi reali (iOS + Android)
 - [ ] Test su diversi device e OS versions
 - [ ] Raccogliere feedback da beta tester
-- [ ] Vedere: [QUICKSTART_TESTING.md](./QUICKSTART_TESTING.md)
+- [ ] Vedere: [docs/DEVICE_TESTING.md](./docs/DEVICE_TESTING.md)
 
 ### Priority 3 - Features Enhancement
 

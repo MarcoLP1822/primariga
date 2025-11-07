@@ -4,11 +4,18 @@ import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { AuthService } from '../../src/infrastructure/auth';
 import { z } from 'zod';
+import { analytics, AnalyticsEvent } from '../../src/infrastructure/analytics';
 
 /**
  * Forgot Password Screen
  * 
- * Permette agli utenti di richiedere il reset della password
+ * Permette agli utenti di richiedere il reset della password tramite email.
+ * 
+ * Security features:
+ * - Email validation
+ * - Error sanitization (no user enumeration)
+ * - Analytics tracking
+ * - AutoComplete support
  */
 
 // Validation schema
@@ -30,18 +37,40 @@ export default function ForgotPasswordScreen() {
     const result = forgotPasswordSchema.safeParse({ email });
     if (!result.success) {
       setError(result.error.errors[0]?.message || 'Email non valida');
+      analytics.track(AnalyticsEvent.PASSWORD_RESET_REQUESTED, {
+        success: false,
+        error_type: 'validation',
+      });
       return;
     }
 
     setLoading(true);
 
+    analytics.track(AnalyticsEvent.PASSWORD_RESET_REQUESTED, {
+      success: false,
+      step: 'started',
+    });
+
     const authResult = await AuthService.resetPassword({ email });
 
     if (authResult.isFailure()) {
-      setError(authResult.error.message);
+      // Sanitize error to prevent user enumeration
+      setError('Se l\'email esiste nel nostro sistema, riceverai un link per il reset.');
+      analytics.track(AnalyticsEvent.PASSWORD_RESET_REQUESTED, {
+        success: false,
+        error_type: 'auth_error',
+      });
       setLoading(false);
+      // Still show success to prevent enumeration
+      setTimeout(() => {
+        setSent(true);
+      }, 500);
       return;
     }
+
+    analytics.track(AnalyticsEvent.PASSWORD_RESET_REQUESTED, {
+      success: true,
+    });
 
     setLoading(false);
     setSent(true);
@@ -97,6 +126,8 @@ export default function ForgotPasswordScreen() {
               keyboardType="email-address"
               autoCapitalize="none"
               autoCorrect={false}
+              autoComplete="email"
+              textContentType="emailAddress"
               editable={!loading}
             />
             {error && <Text style={styles.errorText}>{error}</Text>}

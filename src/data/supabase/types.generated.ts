@@ -25,6 +25,7 @@ export interface Database {
           full_name: string | null
           avatar_url: string | null
           bio: string | null
+          role: 'user' | 'admin' | 'super_admin'
           created_at: string
           updated_at: string
         }
@@ -34,6 +35,7 @@ export interface Database {
           full_name?: string | null
           avatar_url?: string | null
           bio?: string | null
+          role?: 'user' | 'admin' | 'super_admin'
           created_at?: string
           updated_at?: string
         }
@@ -43,6 +45,7 @@ export interface Database {
           full_name?: string | null
           avatar_url?: string | null
           bio?: string | null
+          role?: 'user' | 'admin' | 'super_admin'
           created_at?: string
           updated_at?: string
         }
@@ -191,6 +194,7 @@ export interface Database {
     }
     Enums: {
       interaction_type: 'like' | 'dislike' | 'skip' | 'purchase'
+      user_role: 'user' | 'admin' | 'super_admin'
     }
   }
 }

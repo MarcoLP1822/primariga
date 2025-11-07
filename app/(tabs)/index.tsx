@@ -12,7 +12,7 @@ import {
   ErrorMessage, 
   IconButton,
   Snackbar,
-  AuthPrompt
+  AuthModal
 } from '../../src/presentation/components';
 import { spacing } from '../../src/presentation/theme/spacing';
 import { useEffect, useState } from 'react';
@@ -281,11 +281,12 @@ export default function HomeScreen() {
         }}
       />
 
-      <AuthPrompt
+      <AuthModal
         visible={showAuthPrompt}
-        onDismiss={() => setShowAuthPrompt(false)}
+        onClose={() => setShowAuthPrompt(false)}
+        showIntro={true}
         action="salvare questo libro tra i preferiti"
-        title="Accedi per salvare i tuoi preferiti"
+        introTitle="Accedi per salvare i tuoi preferiti"
       />
     </ScrollView>
   );

@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ActivityIndicator } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ActivityIndicator, ScrollView } from 'react-native';
 import { Link, router } from 'expo-router';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { Surface, IconButton } from 'react-native-paper';
 import { AuthService } from '../../src/infrastructure/auth';
 import { useAppStore } from '../../src/infrastructure/store/store';
 import { z } from 'zod';
 import { useScreenTracking } from '../../src/presentation/hooks/useScreenTracking';
 import { analytics, AnalyticsEvent } from '../../src/infrastructure/analytics';
+import { lightTheme } from '../../src/presentation/theme';
 
 /**
  * Login Screen
@@ -130,32 +131,64 @@ export default function LoginScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.content}>
-        {/* Header */}
-        <View style={styles.header}>
-          <Text style={styles.title}>Bentornato</Text>
-          <Text style={styles.subtitle}>Accedi al tuo account per continuare</Text>
-        </View>
-
-        {/* Form */}
-        <View style={styles.form}>
-          {/* Email Input */}
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>Email</Text>
-            <TextInput
-              style={[styles.input, errors.email && styles.inputError]}
-              placeholder="tua@email.com"
-              placeholderTextColor="#999"
-              value={email}
-              onChangeText={setEmail}
-              keyboardType="email-address"
-              autoCapitalize="none"
-              autoCorrect={false}
-              editable={!loading}
+    <View style={styles.container}>
+      <ScrollView 
+        contentContainerStyle={styles.scrollContent}
+        keyboardShouldPersistTaps="handled"
+      >
+        <Surface style={styles.surface} elevation={4}>
+          {/* Close Button */}
+          <View style={styles.header}>
+            <IconButton
+              icon="close"
+              size={24}
+              onPress={() => router.replace('/(tabs)')}
+              style={styles.closeButton}
             />
-            {errors.email && <Text style={styles.errorText}>{errors.email}</Text>}
           </View>
+
+          {/* Icon */}
+          <View style={styles.iconContainer}>
+            <IconButton
+              icon="account-lock"
+              size={64}
+              iconColor={lightTheme.colors.primary}
+            />
+          </View>
+
+          {/* Title */}
+          <Text style={styles.title}>Accedi per salvare i tuoi preferiti</Text>
+
+          {/* Message */}
+          <Text style={styles.message}>
+            Per salvare questo libro tra i preferiti, hai bisogno di un account. Crea un account per sincronizzare i tuoi preferiti su tutti i dispositivi.
+          </Text>
+
+          {/* Benefits */}
+          <View style={styles.benefitsContainer}>
+            <BenefitItem icon="heart" text="Salva i tuoi libri preferiti" />
+            <BenefitItem icon="sync" text="Sincronizza su tutti i dispositivi" />
+            <BenefitItem icon="chart-line" text="Traccia la tua cronologia di lettura" />
+          </View>
+
+      {/* Form */}
+      <View style={styles.form}>
+        {/* Email Input */}
+        <View style={styles.inputContainer}>
+          <Text style={styles.label}>Email</Text>
+          <TextInput
+            style={[styles.input, errors.email && styles.inputError]}
+            placeholder="tua@email.com"
+            placeholderTextColor="#999"
+            value={email}
+            onChangeText={setEmail}
+            keyboardType="email-address"
+            autoCapitalize="none"
+            autoCorrect={false}
+            editable={!loading}
+          />
+          {errors.email && <Text style={styles.errorText}>{errors.email}</Text>}
+        </View>
 
           {/* Password Input */}
           <View style={styles.inputContainer}>
@@ -230,33 +263,90 @@ export default function LoginScreen() {
             </TouchableOpacity>
           </Link>
         </View>
-      </View>
-    </SafeAreaView>
+        </Surface>
+      </ScrollView>
+    </View>
+  );
+}
+
+// Helper component for benefits
+interface BenefitItemProps {
+  icon: string;
+  text: string;
+}
+
+function BenefitItem({ icon, text }: BenefitItemProps) {
+  return (
+    <View style={styles.benefitItem}>
+      <IconButton
+        icon={icon}
+        size={20}
+        iconColor={lightTheme.colors.primary}
+        style={styles.benefitIcon}
+      />
+      <Text style={styles.benefitText}>{text}</Text>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFF',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
-  content: {
-    flex: 1,
-    padding: 24,
+  scrollContent: {
+    flexGrow: 1,
     justifyContent: 'center',
+    padding: 20,
+  },
+  surface: {
+    borderRadius: 16,
+    padding: 24,
+    backgroundColor: '#fff',
+    maxWidth: 600,
+    width: '100%',
+    alignSelf: 'center',
   },
   header: {
-    marginBottom: 32,
+    alignItems: 'flex-end',
+    marginBottom: -8,
+  },
+  closeButton: {
+    margin: 0,
+  },
+  iconContainer: {
+    alignItems: 'center',
+    marginBottom: 16,
   },
   title: {
-    fontSize: 32,
+    textAlign: 'center',
     fontWeight: 'bold',
-    color: '#000',
+    fontSize: 20,
+    marginBottom: 12,
+    color: lightTheme.colors.onSurface,
+  },
+  message: {
+    textAlign: 'center',
+    color: lightTheme.colors.onSurfaceVariant,
+    marginBottom: 24,
+    fontSize: 14,
+    lineHeight: 20,
+  },
+  benefitsContainer: {
+    marginBottom: 24,
+  },
+  benefitItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
     marginBottom: 8,
   },
-  subtitle: {
-    fontSize: 16,
-    color: '#666',
+  benefitIcon: {
+    margin: 0,
+    marginRight: 8,
+  },
+  benefitText: {
+    fontSize: 14,
+    color: lightTheme.colors.onSurface,
   },
   form: {
     marginBottom: 24,
@@ -290,19 +380,19 @@ const styles = StyleSheet.create({
   },
   forgotPassword: {
     fontSize: 14,
-    color: '#007AFF',
+    color: '#1E3A5F',
     textAlign: 'right',
     marginBottom: 24,
   },
   button: {
-    height: 50,
+    height: 56,
     borderRadius: 12,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 12,
   },
   primaryButton: {
-    backgroundColor: '#007AFF',
+    backgroundColor: '#1E3A5F',
   },
   buttonDisabled: {
     opacity: 0.5,
@@ -341,6 +431,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     marginTop: 24,
+    paddingTop: 24,
+    borderTopWidth: 1,
+    borderTopColor: '#E5E5E5',
   },
   footerText: {
     fontSize: 14,
@@ -348,7 +441,7 @@ const styles = StyleSheet.create({
   },
   footerLink: {
     fontSize: 14,
-    color: '#007AFF',
+    color: '#1E3A5F',
     fontWeight: '600',
   },
 });

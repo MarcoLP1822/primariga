@@ -4,6 +4,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
+import { View, StyleSheet } from 'react-native';
 import { lightTheme } from '../src/presentation/theme';
 import { queryClient } from '../src/infrastructure/config/queryClient';
 import { initSentry } from '../src/infrastructure/monitoring/sentry';
@@ -11,6 +12,7 @@ import { initPostHog } from '../src/infrastructure/analytics';
 import { ErrorBoundary } from '../src/presentation/components/ErrorBoundary';
 import { useAppStore } from '../src/infrastructure/store/store';
 import { AuthService } from '../src/infrastructure/auth';
+import { useSessionTimeout } from '../src/infrastructure/auth/SessionManager';
 
 /**
  * Root Layout - Configura providers globali e navigazione
@@ -22,6 +24,9 @@ import { AuthService } from '../src/infrastructure/auth';
 export default function RootLayout() {
   const initialize = useAppStore((state) => state.initialize);
   const setSession = useAppStore((state) => state.setSession);
+
+  // Session timeout hook - automatically manages session expiration
+  const { resetTimeout } = useSessionTimeout();
 
   // Inizializza Sentry, PostHog e Auth all'avvio
   useEffect(() => {
@@ -59,36 +64,44 @@ export default function RootLayout() {
       <QueryClientProvider client={queryClient}>
         <SafeAreaProvider>
           <PaperProvider theme={lightTheme}>
-            <StatusBar style="auto" />
-            <Stack
-              screenOptions={{
-                headerStyle: {
-                  backgroundColor: lightTheme.colors.primary,
-                },
-                headerTintColor: '#fff',
-                headerTitleStyle: {
-                  fontWeight: 'bold',
-                },
-              }}
-            >
-              {/* Auth Stack - No header */}
-              <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-              
-              {/* Main App Stack */}
-              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-              
-              {/* Book Detail Modal */}
-              <Stack.Screen
-                name="book/[id]"
-                options={{
-                  title: 'Dettagli Libro',
-                  presentation: 'modal',
+            <View style={styles.container} onTouchStart={resetTimeout}>
+              <StatusBar style="auto" />
+              <Stack
+                screenOptions={{
+                  headerStyle: {
+                    backgroundColor: lightTheme.colors.primary,
+                  },
+                  headerTintColor: '#fff',
+                  headerTitleStyle: {
+                    fontWeight: 'bold',
+                  },
                 }}
-              />
-            </Stack>
+              >
+                {/* Auth Stack - No header */}
+                <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+                
+                {/* Main App Stack */}
+                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                
+                {/* Book Detail Modal */}
+                <Stack.Screen
+                  name="book/[id]"
+                  options={{
+                    title: 'Dettagli Libro',
+                    presentation: 'modal',
+                  }}
+                />
+              </Stack>
+            </View>
           </PaperProvider>
         </SafeAreaProvider>
       </QueryClientProvider>
     </ErrorBoundary>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+});

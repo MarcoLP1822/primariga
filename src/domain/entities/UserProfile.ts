@@ -2,12 +2,16 @@
  * User Profile Entity
  * Rappresenta il profilo utente dell'app
  */
+
+export type UserRole = 'user' | 'admin' | 'super_admin';
+
 export interface UserProfile {
   id: string;
   username?: string;
   fullName?: string;
   avatarUrl?: string;
   bio?: string;
+  role: UserRole;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -21,6 +25,7 @@ export function createUserProfile(data: {
   full_name?: string | null;
   avatar_url?: string | null;
   bio?: string | null;
+  role: UserRole;
   created_at: string;
   updated_at: string;
 }): UserProfile {
@@ -30,7 +35,22 @@ export function createUserProfile(data: {
     fullName: data.full_name ?? undefined,
     avatarUrl: data.avatar_url ?? undefined,
     bio: data.bio ?? undefined,
+    role: data.role,
     createdAt: new Date(data.created_at),
     updatedAt: new Date(data.updated_at),
   };
+}
+
+/**
+ * Helper per verificare se un utente è admin
+ */
+export function isAdmin(profile: UserProfile | null): boolean {
+  return profile?.role === 'admin' || profile?.role === 'super_admin';
+}
+
+/**
+ * Helper per verificare se un utente è super admin
+ */
+export function isSuperAdmin(profile: UserProfile | null): boolean {
+  return profile?.role === 'super_admin';
 }
