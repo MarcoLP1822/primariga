@@ -1,6 +1,11 @@
 import { IUserProfileRepository } from '../../domain/repositories/IUserProfileRepository';
-import { UserProfile } from '../../domain/entities/UserProfile';
+import { UserProfile, createUserProfile } from '../../domain/entities/UserProfile';
 import { supabase } from '../supabaseClient';
+import type { Database } from '../supabase/types.generated';
+
+type ProfileRow = Database['public']['Tables']['profiles']['Row'];
+type ProfileInsert = Database['public']['Tables']['profiles']['Insert'];
+type ProfileUpdate = Database['public']['Tables']['profiles']['Update'];
 
 export class SupabaseUserProfileRepository implements IUserProfileRepository {
   async getCurrentProfile(): Promise<UserProfile | null> {
@@ -22,11 +27,8 @@ export class SupabaseUserProfileRepository implements IUserProfileRepository {
       return null;
     }
 
-    return {
-      id: data.id,
-      createdAt: new Date(data.created_at),
-      updatedAt: new Date(data.updated_at),
-    };
+    const profile = data as ProfileRow;
+    return createUserProfile(profile);
   }
 
   async getProfileById(userId: string): Promise<UserProfile | null> {
@@ -34,13 +36,22 @@ export class SupabaseUserProfileRepository implements IUserProfileRepository {
   }
 
   async create(profile: Omit<UserProfile, 'updatedAt'>): Promise<UserProfile> {
+    const insertData: ProfileInsert = {
+      id: profile.id,
+      username: profile.username || null,
+      full_name: profile.fullName || null,
+      avatar_url: profile.avatarUrl || null,
+      bio: profile.bio || null,
+      role: profile.role,
+      created_at: profile.createdAt.toISOString(),
+      updated_at: new Date().toISOString(),
+    };
+
     const { data, error } = await supabase
       .from('profiles')
-      .insert({
-        id: profile.id,
-        created_at: profile.createdAt.toISOString(),
-        updated_at: new Date().toISOString(),
-      })
+      // Type assertion needed due to Supabase client type inference limitation
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      .insert(insertData as any)
       .select()
       .single();
 
@@ -48,15 +59,12 @@ export class SupabaseUserProfileRepository implements IUserProfileRepository {
       throw new Error(`Failed to create profile: ${error?.message}`);
     }
 
-    return {
-      id: data.id,
-      createdAt: new Date(data.created_at),
-      updatedAt: new Date(data.updated_at),
-    };
+    const profileRow = data as ProfileRow;
+    return createUserProfile(profileRow);
   }
 
   async updateProfile(
-    data: Partial<Omit<UserProfile, 'id' | 'createdAt' | 'updatedAt'>>
+    profileData: Partial<Omit<UserProfile, 'id' | 'createdAt' | 'updatedAt'>>
   ): Promise<UserProfile> {
     const {
       data: { user },
@@ -66,11 +74,20 @@ export class SupabaseUserProfileRepository implements IUserProfileRepository {
       throw new Error('No authenticated user');
     }
 
-    const { data: updatedData, error } = await supabase
-      .from('profiles')
-      .update({
-        updated_at: new Date().toISOString(),
-      })
+    const updateData: ProfileUpdate = {
+      username: profileData.username,
+      full_name: profileData.fullName,
+      avatar_url: profileData.avatarUrl,
+      bio: profileData.bio,
+      role: profileData.role,
+      updated_at: new Date().toISOString(),
+    };
+
+    // Type assertion needed due to Supabase client type inference limitation
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const query = supabase.from('profiles') as any;
+    const { data: updatedData, error } = await query
+      .update(updateData)
       .eq('id', user.id)
       .select()
       .single();
@@ -79,14 +96,11 @@ export class SupabaseUserProfileRepository implements IUserProfileRepository {
       throw new Error(`Failed to update profile: ${error?.message}`);
     }
 
-    return {
-      id: updatedData.id,
-      createdAt: new Date(updatedData.created_at),
-      updatedAt: new Date(updatedData.updated_at),
-    };
+    const profileRow = updatedData as ProfileRow;
+    return createUserProfile(profileRow);
   }
 
-  async searchByUsername(username: string): Promise<UserProfile[]> {
+  async searchByUsername(_username: string): Promise<UserProfile[]> {
     // Per ora ritorna array vuoto - non abbiamo username nella tabella profiles
     return [];
   }

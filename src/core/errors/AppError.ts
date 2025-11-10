@@ -13,7 +13,7 @@ export abstract class AppError extends Error {
 
   constructor(
     message: string,
-    public readonly metadata?: Record<string, any>
+    public readonly metadata?: Record<string, unknown>
   ) {
     super(message);
     this.name = this.constructor.name;
@@ -196,19 +196,19 @@ export function isNetworkError(error: unknown): error is NetworkError {
 export function createError(
   type: 'validation' | 'notFound' | 'auth' | 'database' | 'network' | 'business',
   message: string,
-  metadata?: Record<string, any>
+  metadata?: Record<string, unknown>
 ): AppError {
   switch (type) {
     case 'validation':
-      return new ValidationError(message, metadata?.fields);
+      return new ValidationError(message, metadata?.fields as Record<string, string[]> | undefined);
     case 'notFound':
-      return new NotFoundError(metadata?.resource || 'Resource', metadata?.id);
+      return new NotFoundError(metadata?.resource as string || 'Resource', metadata?.id as string);
     case 'auth':
       return new AuthenticationError(message);
     case 'database':
-      return new DatabaseError(message, metadata?.originalError);
+      return new DatabaseError(message, metadata?.originalError as Error);
     case 'network':
-      return new NetworkError(message, metadata?.url);
+      return new NetworkError(message, metadata?.url as string);
     case 'business':
       return new BusinessLogicError(message);
     default:

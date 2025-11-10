@@ -1,6 +1,10 @@
 import { IReadingHistoryRepository } from '../../domain/repositories/IReadingHistoryRepository';
 import { ReadingHistory } from '../../domain/entities/ReadingHistory';
 import { supabase } from '../supabaseClient';
+import type { Database } from '../supabase/types.generated';
+
+type ReadingHistoryRow = Database['public']['Tables']['user_reading_history']['Row'];
+type ReadingHistoryInsert = Database['public']['Tables']['user_reading_history']['Insert'];
 
 export class SupabaseReadingHistoryRepository implements IReadingHistoryRepository {
   async saveReading(
@@ -8,14 +12,18 @@ export class SupabaseReadingHistoryRepository implements IReadingHistoryReposito
     bookId: string,
     durationSeconds?: number
   ): Promise<ReadingHistory> {
+    const insertData: ReadingHistoryInsert = {
+      user_id: userId,
+      book_id: bookId,
+      duration_seconds: durationSeconds,
+      read_at: new Date().toISOString(),
+    };
+
     const { data, error } = await supabase
       .from('user_reading_history')
-      .insert({
-        user_id: userId,
-        book_id: bookId,
-        duration_seconds: durationSeconds,
-        read_at: new Date().toISOString(),
-      })
+      // Type assertion needed due to Supabase client type inference limitation
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      .insert(insertData as any)
       .select()
       .single();
 
@@ -23,12 +31,13 @@ export class SupabaseReadingHistoryRepository implements IReadingHistoryReposito
       throw new Error(`Failed to save reading history: ${error?.message}`);
     }
 
+    const record = data as ReadingHistoryRow;
     return {
-      id: data.id,
-      userId: data.user_id,
-      bookId: data.book_id,
-      readAt: new Date(data.read_at),
-      readingDurationSeconds: data.duration_seconds || undefined,
+      id: record.id,
+      userId: record.user_id,
+      bookId: record.book_id,
+      readAt: new Date(record.read_at),
+      readingDurationSeconds: record.duration_seconds || undefined,
     };
   }
 
@@ -36,13 +45,17 @@ export class SupabaseReadingHistoryRepository implements IReadingHistoryReposito
     // Per book_line_id, dobbiamo prima ottenere il book_id
     // Nota: Questa è una semplificazione. Dovremmo avere una tabella separata
     // o usare bookLineId direttamente se la tabella lo supporta
+    const insertData: ReadingHistoryInsert = {
+      user_id: userId,
+      book_id: bookLineId, // Temporaneo: usiamo bookLineId come bookId
+      read_at: new Date().toISOString(),
+    };
+
     const { data, error } = await supabase
       .from('user_reading_history')
-      .insert({
-        user_id: userId,
-        book_id: bookLineId, // Temporaneo: usiamo bookLineId come bookId
-        read_at: new Date().toISOString(),
-      })
+      // Type assertion needed due to Supabase client type inference limitation
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      .insert(insertData as any)
       .select()
       .single();
 
@@ -50,12 +63,13 @@ export class SupabaseReadingHistoryRepository implements IReadingHistoryReposito
       throw new Error(`Failed to track reading: ${error?.message}`);
     }
 
+    const record = data as ReadingHistoryRow;
     return {
-      id: data.id,
-      userId: data.user_id,
-      bookId: data.book_id,
-      readAt: new Date(data.read_at),
-      readingDurationSeconds: data.duration_seconds || undefined,
+      id: record.id,
+      userId: record.user_id,
+      bookId: record.book_id,
+      readAt: new Date(record.read_at),
+      readingDurationSeconds: record.duration_seconds || undefined,
     };
   }
 
@@ -76,7 +90,8 @@ export class SupabaseReadingHistoryRepository implements IReadingHistoryReposito
       return [];
     }
 
-    return data.map((item) => ({
+    const records = data as ReadingHistoryRow[];
+    return records.map((item) => ({
       id: item.id,
       userId: item.user_id,
       bookId: item.book_id,
@@ -98,7 +113,7 @@ export class SupabaseReadingHistoryRepository implements IReadingHistoryReposito
     return error ? 0 : count || 0;
   }
 
-  async getUserReadingStreak(userId: string): Promise<number> {
+  async getUserReadingStreak(_userId: string): Promise<number> {
     // TODO: Implementare logica per calcolare lo streak
     // Per ora ritorna 0
     return 0;
@@ -117,7 +132,8 @@ export class SupabaseReadingHistoryRepository implements IReadingHistoryReposito
       return null;
     }
 
-    return new Date(data.read_at);
+    const record = data as Pick<ReadingHistoryRow, 'read_at'>;
+    return new Date(record.read_at);
   }
 
   async getReadingStats(userId: string): Promise<{
@@ -141,8 +157,9 @@ export class SupabaseReadingHistoryRepository implements IReadingHistoryReposito
       };
     }
 
-    const totalTime = data.reduce((sum, item) => sum + (item.duration_seconds || 0), 0);
-    const recentlyRead = data.slice(0, 10).map((item) => ({
+    const records = data as ReadingHistoryRow[];
+    const totalTime = records.reduce((sum, item) => sum + (item.duration_seconds || 0), 0);
+    const recentlyRead = records.slice(0, 10).map((item) => ({
       id: item.id,
       userId: item.user_id,
       bookId: item.book_id,
@@ -151,9 +168,9 @@ export class SupabaseReadingHistoryRepository implements IReadingHistoryReposito
     }));
 
     return {
-      totalBooksRead: data.length,
+      totalBooksRead: records.length,
       totalReadingTimeSeconds: totalTime,
-      averageReadingTimeSeconds: data.length > 0 ? totalTime / data.length : 0,
+      averageReadingTimeSeconds: records.length > 0 ? totalTime / records.length : 0,
       recentlyRead,
     };
   }

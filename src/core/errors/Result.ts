@@ -53,11 +53,11 @@ export class Failure<E> {
   }
 
   map<U>(_fn: (value: never) => U): Result<never, E> {
-    return this as any;
+    return this as Result<never, E>;
   }
 
   flatMap<U>(_fn: (value: never) => Result<U, E>): Result<never, E> {
-    return this as any;
+    return this as Result<never, E>;
   }
 
   getOrThrow(): never {
@@ -106,22 +106,22 @@ export function tryCatchSync<T>(fn: () => T): Result<T, Error> {
 /**
  * Combine multiple Results
  */
-export function combine<T extends readonly Result<any, any>[]>(
+export function combine<T extends readonly Result<unknown, unknown>[]>(
   results: T
 ): Result<
-  { [K in keyof T]: T[K] extends Result<infer V, any> ? V : never },
-  T[number] extends Result<any, infer E> ? E : never
+  { [K in keyof T]: T[K] extends Result<infer V, unknown> ? V : never },
+  T[number] extends Result<unknown, infer E> ? E : never
 > {
-  const values: any[] = [];
+  const values: unknown[] = [];
 
   for (const result of results) {
     if (result.isFailure()) {
-      return result as any;
+      return result as Result<never, T[number] extends Result<unknown, infer E> ? E : never>;
     }
     values.push(result.value);
   }
 
-  return success(values as any);
+  return success(values as { [K in keyof T]: T[K] extends Result<infer V, unknown> ? V : never });
 }
 
 /**

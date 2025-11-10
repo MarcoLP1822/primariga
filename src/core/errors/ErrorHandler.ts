@@ -4,7 +4,7 @@
  * Funzioni per gestire e loggare errori
  */
 
-import { AppError } from './AppError';
+import { AppError, ValidationError, BusinessLogicError } from './AppError';
 import { ZodError } from 'zod';
 import * as Sentry from '../../infrastructure/monitoring/sentry';
 
@@ -26,18 +26,15 @@ export function normalizeError(error: unknown): AppError {
       fields[path].push(issue.message);
     });
 
-    const { ValidationError } = require('./AppError');
     return new ValidationError('Errori di validazione', fields);
   }
 
   // Standard Error
   if (error instanceof Error) {
-    const { BusinessLogicError } = require('./AppError');
     return new BusinessLogicError(error.message);
   }
 
   // Unknown error type
-  const { BusinessLogicError } = require('./AppError');
   return new BusinessLogicError('Si è verificato un errore sconosciuto');
 }
 
