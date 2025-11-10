@@ -37,7 +37,8 @@ describe('SignupScreen', () => {
   it('should render signup form correctly', () => {
     render(<SignupScreen />);
 
-    expect(screen.getByText('Crea un Account')).toBeTruthy();
+    // Verifica il titolo del pattern "optional auth"
+    expect(screen.getByText('Accedi per salvare i tuoi preferiti')).toBeTruthy();
     expect(screen.getByPlaceholderText('Mario Rossi')).toBeTruthy();
     expect(screen.getByPlaceholderText('mario_rossi')).toBeTruthy();
     expect(screen.getByPlaceholderText('tua@email.com')).toBeTruthy();
@@ -69,8 +70,8 @@ describe('SignupScreen', () => {
         username: 'testuser',
       });
       expect(Alert.alert).toHaveBeenCalledWith(
-        'Registrazione Completata',
-        'Controlla la tua email per verificare il tuo account',
+        '✅ Registrazione Completata!',
+        'Il tuo account è stato creato con successo. Puoi ora effettuare il login.',
         expect.any(Array)
       );
     });

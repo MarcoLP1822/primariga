@@ -117,17 +117,26 @@ export const signUp = async (params: SignUpParams): Promise<Result<User, AppErro
   try {
     const { email, password, fullName, username } = params;
 
+    // Costruisci le options
+    const options: {
+      data: { full_name?: string; username?: string };
+      emailRedirectTo?: string;
+    } = {
+      data: {
+        full_name: fullName,
+        username: username,
+      },
+    };
+
+    // Aggiungi emailRedirectTo solo se siamo su web (window.location disponibile)
+    if (typeof window !== 'undefined' && window.location) {
+      options.emailRedirectTo = `${window.location.origin}/auth/callback`;
+    }
+
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
-      options: {
-        data: {
-          full_name: fullName,
-          username: username,
-        },
-        // emailRedirectTo solo per web, non necessario per React Native
-        // React Native usa deep linking automaticamente tramite Expo
-      },
+      options,
     });
 
     if (error) {

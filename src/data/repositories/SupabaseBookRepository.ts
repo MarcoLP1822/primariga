@@ -135,15 +135,87 @@ export class SupabaseBookRepository implements IBookRepository {
   }
 
   async getRecommendedBooks(userId: string, limit: number = 10): Promise<Book[]> {
-    // TODO: Implementare logica di raccomandazione basata su preferenze utente
-    // Per ora, ritorna libri casuali
-    const { data, error } = await supabase.from('books').select('*').limit(limit);
+    // Implementa logica di raccomandazione basata su preferenze utente
+    // 1. Ottieni i generi dei libri che l'utente ha apprezzato (liked)
+    const { data: userLikes, error: likesError } = await supabase
+      .from('user_likes')
+      .select('book_id')
+      .eq('user_id', userId);
 
-    if (error || !data) {
-      return [];
+    if (likesError || !userLikes || userLikes.length === 0) {
+      // Nessun like trovato - ritorna libri popolari basati su view_count
+      const { data, error } = await supabase
+        .from('books')
+        .select('*')
+        .order('view_count', { ascending: false })
+        .limit(limit);
+
+      return error || !data ? [] : data.map(this.mapToBook.bind(this));
     }
 
-    return data.map(this.mapToBook.bind(this));
+    // Cast per risolvere problemi di type inference
+    type UserLike = { book_id: string };
+    const typedLikes = userLikes as UserLike[];
+
+    // Ottieni i libri che l'utente ha apprezzato per estrarre i generi
+    const likedBookIds = typedLikes.map((like) => like.book_id);
+    const { data: likedBooks, error: booksError } = await supabase
+      .from('books')
+      .select('genre')
+      .in('id', likedBookIds);
+
+    if (booksError || !likedBooks) {
+      // Fallback a libri popolari
+      const { data, error } = await supabase
+        .from('books')
+        .select('*')
+        .order('view_count', { ascending: false })
+        .limit(limit);
+
+      return error || !data ? [] : data.map(this.mapToBook.bind(this));
+    }
+
+    // Cast per type safety
+    type BookGenre = { genre: string[] };
+    const typedBooks = likedBooks as BookGenre[];
+
+    // Estrai tutti i generi unici dai libri piaciuti
+    const preferredGenres = Array.from(
+      new Set(typedBooks.flatMap((book) => book.genre || []))
+    );
+
+    if (preferredGenres.length === 0) {
+      // Nessun genere trovato - usa libri popolari
+      const { data, error } = await supabase
+        .from('books')
+        .select('*')
+        .order('view_count', { ascending: false })
+        .limit(limit);
+
+      return error || !data ? [] : data.map(this.mapToBook.bind(this));
+    }
+
+    // Cerca libri con generi simili che l'utente non ha ancora apprezzato
+    const { data: recommendations, error: recError } = await supabase
+      .from('books')
+      .select('*')
+      .overlaps('genre', preferredGenres)
+      .not('id', 'in', `(${likedBookIds.join(',')})`)
+      .order('view_count', { ascending: false })
+      .limit(limit);
+
+    if (recError || !recommendations || recommendations.length === 0) {
+      // Fallback finale
+      const { data, error } = await supabase
+        .from('books')
+        .select('*')
+        .order('view_count', { ascending: false })
+        .limit(limit);
+
+      return error || !data ? [] : data.map(this.mapToBook.bind(this));
+    }
+
+    return recommendations.map(this.mapToBook.bind(this));
   }
 
   async getBooksByIds(bookIds: string[]): Promise<Book[]> {

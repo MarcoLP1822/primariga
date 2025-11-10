@@ -49,6 +49,9 @@ describe('Auth Store', () => {
     full_name: 'Test User',
     avatar_url: 'https://example.com/avatar.jpg',
     bio: 'Test bio',
+    role: 'user' as const, // Add role field
+    created_at: '2024-01-01T00:00:00Z',
+    updated_at: '2024-01-01T00:00:00Z',
   };
 
   beforeEach(() => {
@@ -110,6 +113,7 @@ describe('Auth Store', () => {
           fullName: 'Test User',
           avatarUrl: 'https://example.com/avatar.jpg',
           bio: 'Test bio',
+          role: 'user',
         });
       });
     });
@@ -284,6 +288,7 @@ describe('Auth Store', () => {
           fullName: 'Updated User',
           avatarUrl: 'https://example.com/avatar.jpg',
           bio: 'Test bio',
+          role: 'user',
         });
       });
     });

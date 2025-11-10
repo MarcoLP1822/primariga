@@ -11,8 +11,9 @@ export class GetOrCreateUserProfile {
     if (!profile) {
       profile = await this.userProfileRepository.create({
         id: userId,
+        role: 'user', // Default role for new users
         createdAt: new Date(),
-        updatedAt: new Date(),
+        // updatedAt viene gestito dal repository/database
       });
     }
 

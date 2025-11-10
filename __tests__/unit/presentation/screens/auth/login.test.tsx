@@ -54,7 +54,8 @@ describe('LoginScreen', () => {
   it('should render login form correctly', () => {
     render(<LoginScreen />);
 
-    expect(screen.getByText('Bentornato')).toBeTruthy();
+    // Verifica il titolo del pattern "optional auth"
+    expect(screen.getByText('Accedi per salvare i tuoi preferiti')).toBeTruthy();
     expect(screen.getByPlaceholderText('tua@email.com')).toBeTruthy();
     expect(screen.getByPlaceholderText('••••••••')).toBeTruthy();
     expect(screen.getByText('Accedi')).toBeTruthy();

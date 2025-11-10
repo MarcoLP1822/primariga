@@ -113,10 +113,49 @@ export class SupabaseReadingHistoryRepository implements IReadingHistoryReposito
     return error ? 0 : count || 0;
   }
 
-  async getUserReadingStreak(_userId: string): Promise<number> {
-    // TODO: Implementare logica per calcolare lo streak
-    // Per ora ritorna 0
-    return 0;
+  async getUserReadingStreak(userId: string): Promise<number> {
+    // Calcola lo streak di lettura (giorni consecutivi con almeno una lettura)
+    const { data, error } = await supabase
+      .from('user_reading_history')
+      .select('read_at')
+      .eq('user_id', userId)
+      .order('read_at', { ascending: false });
+
+    if (error || !data || data.length === 0) {
+      return 0;
+    }
+
+    // Cast per risolvere problemi di type inference di Supabase
+    const records = data as Array<{ read_at: string }>;
+
+    // Converti le date in giorni (YYYY-MM-DD)
+    const readDates = records.map((record) => {
+      const date = new Date(record.read_at);
+      return date.toISOString().split('T')[0];
+    });
+
+    // Rimuovi duplicati (stesso giorno)
+    const uniqueDates = Array.from(new Set(readDates)).sort().reverse();
+
+    // Calcola lo streak partendo da oggi
+    const today = new Date().toISOString().split('T')[0];
+    let streak = 0;
+    const currentDate = new Date(today);
+
+    for (const readDate of uniqueDates) {
+      const expectedDate = currentDate.toISOString().split('T')[0];
+      
+      if (readDate === expectedDate) {
+        streak++;
+        // Vai al giorno precedente
+        currentDate.setDate(currentDate.getDate() - 1);
+      } else if (readDate < expectedDate) {
+        // C'è un gap nei giorni - lo streak si è interrotto
+        break;
+      }
+    }
+
+    return streak;
   }
 
   async getLastReadDate(userId: string): Promise<Date | null> {
